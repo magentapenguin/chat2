@@ -19,7 +19,13 @@
             @apply bg-gray-200 text-gray-500 cursor-not-allowed;
         }
     }
+    .dialog {
+        @apply bg-white border border-gray-200 rounded-lg p-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[80v] max-w-[500px] z-50 h-[80vh];
+    }
 }
 [hidden] {
     @apply hidden;
+}
+html:has(.dialog:not([hidden])) #dialog-bg {
+    @apply block backdrop-blur-sm;
 }

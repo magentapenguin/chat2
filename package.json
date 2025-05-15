@@ -8,12 +8,10 @@
     "@hcaptcha/loader": "^2.0.0",
     "@supabase/supabase-js": "^2.49.4",
     "@tailwindcss/vite": "^4.1.6",
+    "gsap": "^3.13.0",
     "inter-ui": "^4.1.0",
     "tailwindcss": "^4.1.6",
     "vite": "^6.3.5"
-  },
-  "devDependencies": {
-    "@hcaptcha/types": "^1.0.4"
   },
   "type": "module"
 }

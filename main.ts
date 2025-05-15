@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { hCaptchaLoader } from '@hcaptcha/loader';
+import './login'
 
 declare const hcaptcha: any;
 
