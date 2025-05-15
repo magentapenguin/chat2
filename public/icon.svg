@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg width="512" height="512" version="1.1" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <linearGradient id="linearGradient9" x1="61" x2="451" y1="101.19" y2="410.8" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#9150f1" offset="0"/>
+   <stop stop-color="#4d50f1" offset=".25"/>
+   <stop stop-color="#44cbf1" offset=".5"/>
+   <stop stop-color="#69ffa1" offset=".75"/>
+   <stop stop-color="#86fe58" offset="1"/>
+  </linearGradient>
+ </defs>
+ <g stroke-linecap="round" stroke-linejoin="round">
+  <path d="m111 111.19c-22.16 0-40 17.84-40 40v249.61l103.25-59.613h226.75c22.16 0 40-17.84 40-40v-150c0-22.16-17.84-40-40-40z" fill="#fff" stroke="url(#linearGradient9)" stroke-width="20"/>
+  <g stroke="#000">
+   <circle cx="379.83" cy="225.23" r="25.963" stroke-width="20"/>
+   <circle cx="197.34" cy="225.23" r="25.963" stroke-width="20"/>
+   <path d="m341.42 282.99a50.027 31.112 0 0 1-25.013 26.943 50.027 31.112 0 0 1-50.027 0 50.027 31.112 0 0 1-25.013-26.943h50.027z" stroke-width="16.119"/>
+   <rect transform="matrix(.99087 .1348 .1348 -.99087 0 0)" x="283.01" y="-67.839" width="193.11" height="15.867" stroke-width="15.472"/>
+   <rect transform="rotate(7.7468)" x="321.56" y="-26.09" width="116" height="85.447" stroke-width="27.827"/>
+  </g>
+ </g>
+</svg>
