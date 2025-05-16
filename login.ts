@@ -16,8 +16,9 @@ async function login(email: string, username: string) {
                 captchaToken: captcha,
                 emailRedirectTo: location.origin + location.pathname,
                 data: {
-                    username: username
+                    username: username,
                 },
+
             }
         });
         if (error) {
@@ -40,6 +41,17 @@ export async function checkLogin() {
         return true;
     }
     return false;
+}
+export async function checkLoginUser() {
+    const { data: { user }, error } = await supabase.auth.getUser();
+    if (error) {
+        console.error("Error getting user:", error);
+        return null;
+    }
+    if (user) {
+        return user;
+    }
+    return null;
 }
 
 
@@ -123,6 +135,8 @@ loginStep1Form.addEventListener("submit", async (event) => {
         loginError.innerText = "Error: " + error.message;
     } finally {
         loginLoading.hidden = true;
+        (window as any).hcaptcha.reset(); // @ts-ignore
+        loginStep1Form.reset();
     }
 });
 
