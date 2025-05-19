@@ -1,6 +1,6 @@
 import { supabase } from "./main";
 import { gsap } from "gsap";
-
+import { showToast } from "./utils";
 import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
 
 gsap.registerPlugin(DrawSVGPlugin);
@@ -63,6 +63,12 @@ const logout = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
         console.error("Error signing out:", error);
+        showToast({
+            title: "Error signing out",
+            message: error.message,
+            type: "error",
+            duration: 5000,
+        });
     }
 };
 

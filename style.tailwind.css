@@ -28,11 +28,44 @@
     .close {
         @variant after {
             content: url('/close.svg');
-            @apply w-4 h-4;
+            @apply w-[1em] h-[1em] cursor-pointer;
             @variant dark {
                 content: url('/close-dark.svg');
             }
         }
+    }
+    .toast-container {
+        @apply fixed top-0 left-0 z-80 p-2 flex flex-col gap-2;
+    }
+    .toast {
+        @apply p-2 w-full max-w-sm bg-gray-900 border-l-4 text-white cursor-default rounded-sm;
+        animation: slide-in 0.3s ease-in-out forwards;
+    }
+    .toast > strong {
+        @apply font-semibold flex justify-between;
+    }
+
+    .toast.error {
+        @apply border-red-500;
+    }
+    .toast.success {
+        @apply border-emerald-500;
+    }
+    .toast.info {
+        @apply border-blue-500;
+    }
+    .toast.warning {
+        @apply border-yellow-500;
+    }
+}
+@keyframes slide-in {
+    0% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
     }
 }
 [hidden] {

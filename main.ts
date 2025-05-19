@@ -1,8 +1,8 @@
 import { createClient } from '@supabase/supabase-js'
 import { hCaptchaLoader } from '@hcaptcha/loader';
-import { checkLogin, checkLoginUser } from './login';
+import { checkLoginUser } from './login';
 import * as types from './types';
-import { send } from 'vite';
+import { showToast } from './utils';
 
 export const loaded = new Promise<void>((resolve) => {
     const checkLoaded = () => {
@@ -53,15 +53,30 @@ chatForm.addEventListener('submit', async (event) => {
     const user = await checkLoginUser();
 
     if (!user) {
-        alert('Please log in to send messages.');
+        showToast({
+            title: 'Error',
+            message: 'You must be logged in to send messages.',
+            type: 'error',
+            duration: 5000,
+        });
         return;
     }
     if (message.length > 500) {
-        alert('Message is too long. Please limit to 500 characters.');
+        showToast({
+            title: 'Error',
+            message: 'Message is too long. Maximum length is 500 characters.',
+            type: 'error',
+            duration: 5000,
+        });
         return;
     }
     if (message.length === 0) {
-        alert('Message cannot be empty.');
+        showToast({
+            title: 'Error',
+            message: 'Message cannot be empty.',
+            type: 'error',
+            duration: 5000,
+        });
         return;
     }
 

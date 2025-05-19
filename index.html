@@ -21,10 +21,10 @@
         <div id="chat" class="border border-gray-400 dark:border-gray-800 rounded-lg p-4 h-96 overflow-y-scroll">
             <!-- Chat messages will be appended here -->
         </div>
-        <form class="flex items-stretch mt-4 gap-1">
+        <form class="flex items-stretch mt-4 gap-1" id="chat-form">
             <fieldset disabled class="contents group">
-                <input type="text" id="message-input" class="input" placeholder="Type your message...">
-                <button id="send-button" class="btn" type="submit">Send</button>
+                <input type="text" class="input" placeholder="Type your message...">
+                <button class="btn" type="submit">Send</button>
                 <small class="text-gray-500 dark:text-gray-600 text-sm hidden group-disabled:block">
                     Please log in to send messages.
                 </small>
