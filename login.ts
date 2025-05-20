@@ -1,4 +1,4 @@
-import { supabase } from "./main";
+import { supabase } from './supabase-client';
 import { gsap } from "gsap";
 import { showToast } from "./utils";
 import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
