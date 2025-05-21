@@ -6,6 +6,16 @@
     --default-font-family: 'Inter', sans-serif;
 }
 
+@layer utilities {
+    .scrollbar-thin {
+        scrollbar-width: thin;
+        &::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+    }
+}
+
 @layer components {
     .btn {
         @apply text-white rounded-lg p-1 px-1.5 cursor-pointer bg-green-600 hover:bg-green-700 border border-green-800 text-sm dark:bg-green-800 dark:hover:bg-green-900 dark:border-green-700;
@@ -56,6 +66,9 @@
     }
     .toast.warning {
         @apply border-yellow-500;
+    }
+    :root {
+        color-scheme: light dark;
     }
 }
 @keyframes slide-in {
