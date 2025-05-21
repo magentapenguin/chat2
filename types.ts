@@ -1,4 +1,3 @@
-import { send } from 'vite';
 import z from 'zod';
 
 export const TextMessage = z.object({

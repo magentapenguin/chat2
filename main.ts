@@ -1,8 +1,12 @@
-import { createClient } from '@supabase/supabase-js'
 import { hCaptchaLoader } from '@hcaptcha/loader';
-import { checkLoginUser } from './login';
+import { customAlphabet } from 'nanoid';
+import { checkLoginUser, checkLogin } from './login';
 import * as types from './types';
 import { showToast } from './utils';
+import { supabase, Types as dbTypes } from './supabase-client';
+
+export const nanoid = customAlphabet('1234567890abcdef', 30);
+
 
 export const loaded = new Promise<void>((resolve) => {
     const checkLoaded = () => {
@@ -28,9 +32,6 @@ hcaptcha.render(
 );
 
 
-// Create a single supabase client for interacting with your database
-export const supabase = createClient('https://piukosdnirsgphzdyjan.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpdWtvc2RuaXJzZ3BoemR5amFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcwODc3MDIsImV4cCI6MjA2MjY2MzcwMn0.eIvvAayqroZzDpmlz21uRpllEAJhV_vrQtBJccxcvLw')
-
 supabase.realtime.connect();
 
 const channel = supabase.realtime.channel('messages', {
@@ -48,7 +49,6 @@ chatForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     const formData = new FormData(chatForm);
     const message = formData.get('message') as string;
-    const isSneaky = (formData.get('sneaky') ?? false) as boolean; // Should we send this to a database
 
     const user = await checkLoginUser();
 
@@ -80,45 +80,48 @@ chatForm.addEventListener('submit', async (event) => {
         return;
     }
 
-    const messageData = {
-        type: 'text',
-        content: message,
-        sender: user?.id,
-        timestamp: new Date(),
-    }
-
-    if (!isSneaky) {
-        const { data, error } = await supabase
-            .from('messages')
-            .insert([
-                { message: message }
-            ]);
-        if (error) {
-            console.error('Error inserting message:', error);
-            return;
-        }
-    }
-    // Broadcast the message to all clients
-    await channel.send({
-        type: 'broadcast',
-        event: 'new-message',
-        payload: {
-            new: messageData,
-        },
-    });
-
-});
-
-channel.on('broadcast', { event: 'new-message' }, (payload) => {
-    const message = payload.new;
-    const parsedMessage = types.Message.safeParse(message);
-    if (parsedMessage.success) {
-        const messageData = parsedMessage.data;
-        addMessage(messageData);
-    } else {
-        console.error('Invalid message format:', parsedMessage.error);
+    const { error } = await supabase
+        .from('messages')
+        .insert([
+            { data: message, id: nanoid() }
+        ]);
+    if (error) {
+        console.error('Error inserting message:', error);
+        showToast({
+            title: 'Error',
+            message: 'Error inserting message into database. (' + error.message + ')',
+            type: 'error',
+            duration: 5000,
+        });
+        return;
     }
 });
+
+channel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, (payload) => {
+    console.log('New message received:', payload);
+    try {
+        const message = row2Msg(payload as unknown as dbTypes.Database['public']['Tables']['messages']['Row']);
+        addMessage(message);
+    } catch (error) {
+        console.error('Error parsing message:', error);
+        showToast({
+            title: 'Error',
+            message: 'Error parsing message from database. (' + error.message + ')',
+            type: 'error',
+            duration: 5000,
+        });
+    }
+});
+
+function row2Msg(row: dbTypes.Database['public']['Tables']['messages']['Row']) {
+    const message = {
+        id: row.id,
+        content: row.data,
+        sender: row.user_id,
+        timestamp: new Date(row.timestamp).toLocaleString(),
+    }
+    return message;
+}
 
 function addMessage(message) {
     const messageElement = document.createElement('div');
@@ -148,46 +151,12 @@ if (error) {
 }
 if (data) {
     data.forEach((message) => {
-        const parsedMessage = types.Message.safeParse(message.message);
-        if (parsedMessage.success) {
-            const messageData = parsedMessage.data;
-            addMessage(messageData);
-        } else {
-            console.warn('Invalid message format:', parsedMessage.error);
-        }
+        const parsedMessage = row2Msg(message);
+        addMessage(parsedMessage);
     });
 }
 
-const cyrb53 = (str: string, seed = 0): number => {
-    let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
-    for(let i = 0, ch; i < str.length; i++) {
-        ch = str.charCodeAt(i);
-        h1 = Math.imul(h1 ^ ch, 2654435761);
-        h2 = Math.imul(h2 ^ ch, 1597334677);
-    }
-    h1  = Math.imul(h1 ^ (h1 >>> 16), 2246822507);
-    h1 ^= Math.imul(h2 ^ (h2 >>> 13), 3266489909);
-    h2  = Math.imul(h2 ^ (h2 >>> 16), 2246822507);
-    h2 ^= Math.imul(h1 ^ (h1 >>> 13), 3266489909);
-  
-    return 4294967296 * (2097151 & h2) + (h1 >>> 0);
-};
-
-function stamp(): string {
-    return new Date().toISOString();
-}
-function humanize(date: string | Date): string {
-    if (typeof date === 'string') {
-        date = new Date(date);
-    }
-    return date.toLocaleDateString()+' '+date.toLocaleTimeString();
-}
-
-function timestamp2html(timestamp: string): string {
-    return `<time datetime="${timestamp}">${humanize(timestamp)}</time>`;
-}
-
-function usernameColor(username: string, seed = 0): string {
-    const hue = cyrb53(username, seed) % 360;
-    return `hsl(${hue}, 50%, 50%)`;
-}
+checkLogin().then((loggedIn) => {
+    const chatFieldset = chatForm.querySelector('fieldset') as HTMLFieldSetElement;
+    chatFieldset.disabled = !loggedIn;
+});
