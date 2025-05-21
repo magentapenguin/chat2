@@ -7,7 +7,6 @@ import { supabase, Types as dbTypes } from './supabase-client';
 
 export const nanoid = customAlphabet('1234567890abcdef', 30);
 
-
 export const loaded = new Promise<void>((resolve) => {
     const checkLoaded = () => {
         if (document.readyState === 'complete') {
@@ -123,17 +122,44 @@ function row2Msg(row: dbTypes.Database['public']['Tables']['messages']['Row']) {
     return message;
 }
 
+const cyrb53 = (str: string, seed = 0): number => {
+    let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+    for(let i = 0, ch; i < str.length; i++) {
+        ch = str.charCodeAt(i);
+        h1 = Math.imul(h1 ^ ch, 2654435761);
+        h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1  = Math.imul(h1 ^ (h1 >>> 16), 2246822507);
+    h1 ^= Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2  = Math.imul(h2 ^ (h2 >>> 16), 2246822507);
+    h2 ^= Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  
+    return 4294967296 * (2097151 & h2) + (h1 >>> 0);
+};
+
+function humanize(date: string | Date): string {
+    if (typeof date === 'string') {
+        date = new Date(date);
+    }
+    return date.toLocaleDateString()+' '+date.toLocaleTimeString();
+}
+
+function usernameColor(username: string, seed = 0): string {
+    const hue = cyrb53(username, seed) % 360;
+    return `hsl(${hue}, 50%, 50%)`;
+}
+
 function addMessage(message) {
     const messageElement = document.createElement('div');
     messageElement.className = 'message';
-    const timestampElement = document.createElement('time');
-    timestampElement.setAttribute('datetime', message.timestamp);
-    timestampElement.innerHTML = message.timestamp;
     const userElement = document.createElement('strong');
     userElement.style.color = usernameColor(message.sender);
     userElement.textContent = message.sender;
     messageElement.appendChild(userElement);
-    messageElement.appendChild(document.createTextNode(': '));
+    const timestampElement = document.createElement('time');
+    timestampElement.setAttribute('datetime', message.timestamp);
+    timestampElement.innerHTML = humanize(message.timestamp);
+    messageElement.appendChild(timestampElement);
     const contentElement = document.createElement('span');
     contentElement.textContent = message.content;
     messageElement.appendChild(contentElement);
