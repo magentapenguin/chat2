@@ -36,19 +36,19 @@ export type Database = {
     Tables: {
       messages: {
         Row: {
-          data: Json
+          data: string
           id: string
           timestamp: string
           user_id: string
         }
         Insert: {
-          data?: Json
+          data: string
           id: string
           timestamp?: string
           user_id?: string
         }
         Update: {
-          data?: Json
+          data?: string
           id?: string
           timestamp?: string
           user_id?: string

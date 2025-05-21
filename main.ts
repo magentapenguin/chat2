@@ -80,7 +80,7 @@ chatForm.addEventListener('submit', async (event) => {
         return;
     }
 
-    const { data, error } = await supabase
+    const { error } = await supabase
         .from('messages')
         .insert([
             { data: message, id: nanoid() }
@@ -98,6 +98,7 @@ chatForm.addEventListener('submit', async (event) => {
 });
 
 channel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, (payload) => {
+    console.log('New message received:', payload);
     try {
         const message = row2Msg(payload as unknown as dbTypes.Database['public']['Tables']['messages']['Row']);
         addMessage(message);
@@ -113,20 +114,13 @@ channel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'mess
 });
 
 function row2Msg(row: dbTypes.Database['public']['Tables']['messages']['Row']) {
-    const message = row.data as unknown;
-    if (typeof message !== 'object' || message === null) {
-        throw new Error('Invalid message format');
+    const message = {
+        id: row.id,
+        content: row.data,
+        sender: row.user_id,
+        timestamp: new Date(row.timestamp).toLocaleString(),
     }
-    const id = row.id;
-    const user = row.user_id;
-    message['id'] = id;
-    message['user_id'] = user;
-    const parsedMessage = types.Message.safeParse(message);
-    if (parsedMessage.success) {
-        return parsedMessage.data;
-    } else {
-        throw new Error('Invalid message format');
-    }
+    return message;
 }
 
 function addMessage(message) {
@@ -153,13 +147,8 @@ if (error) {
 }
 if (data) {
     data.forEach((message) => {
-        const parsedMessage = types.Message.safeParse(message);
-        if (parsedMessage.success) {
-            const messageData = parsedMessage.data;
-            addMessage(messageData);
-        } else {
-            console.error('Invalid message format:', parsedMessage.error);
-        }
+        const parsedMessage = row2Msg(message);
+        addMessage(parsedMessage);
     });
 }
 

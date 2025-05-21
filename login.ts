@@ -30,7 +30,6 @@ async function login(email: string, username: string) {
         throw new Error("Captcha not completed");
     }
 }
-
 export async function checkLogin() {
     const { data: { session }, error } = await supabase.auth.getSession();
     if (error) {
@@ -58,6 +57,7 @@ export async function checkLoginUser() {
 const loginDialog = document.getElementById("login-flow") as HTMLDivElement;
 const loginButton = document.getElementById("login-button") as HTMLButtonElement;
 const logoutButton = document.getElementById("logout-button") as HTMLButtonElement;
+const backButton = document.getElementById("back-to-login") as HTMLButtonElement;
 
 const logout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -71,6 +71,15 @@ const logout = async () => {
         });
     }
 };
+
+backButton.addEventListener("click", () => {
+    loginStep1Form.hidden = false;
+    loginError.hidden = true;
+    loginLoading.hidden = true;
+    loginComplete.hidden = true;
+    (window as any).hcaptcha.reset(); // @ts-ignore
+    loginStep1Form.reset();
+});
 
 logoutButton.addEventListener("click", async () => {
     await logout();
