@@ -1,9 +1,8 @@
-@import 'tailwindcss';
-@import 'inter-ui/inter.css';
-
+@import "tailwindcss";
+@import "inter-ui/inter.css";
 
 @theme {
-    --default-font-family: 'Inter', sans-serif;
+    --default-font-family: "Inter", sans-serif;
 }
 
 @layer components {
@@ -27,10 +26,10 @@
     }
     .close {
         @variant after {
-            content: url('/close.svg');
+            content: url("/close.svg");
             @apply w-[1em] h-[1em] cursor-pointer;
             @variant dark {
-                content: url('/close-dark.svg');
+                content: url("/close-dark.svg");
             }
         }
     }
