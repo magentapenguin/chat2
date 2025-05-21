@@ -128,25 +128,26 @@ function row2Msg(row: dbTypes.Database["public"]["Tables"]["messages"]["Row"]) {
 }
 
 const cyrb53 = (str: string, seed = 0): number => {
-    let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
-    for(let i = 0, ch; i < str.length; i++) {
+    let h1 = 0xdeadbeef ^ seed,
+        h2 = 0x41c6ce57 ^ seed;
+    for (let i = 0, ch; i < str.length; i++) {
         ch = str.charCodeAt(i);
         h1 = Math.imul(h1 ^ ch, 2654435761);
         h2 = Math.imul(h2 ^ ch, 1597334677);
     }
-    h1  = Math.imul(h1 ^ (h1 >>> 16), 2246822507);
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507);
     h1 ^= Math.imul(h2 ^ (h2 >>> 13), 3266489909);
-    h2  = Math.imul(h2 ^ (h2 >>> 16), 2246822507);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507);
     h2 ^= Math.imul(h1 ^ (h1 >>> 13), 3266489909);
-  
+
     return 4294967296 * (2097151 & h2) + (h1 >>> 0);
 };
 
 function humanize(date: string | Date): string {
-    if (typeof date === 'string') {
+    if (typeof date === "string") {
         date = new Date(date);
     }
-    return date.toLocaleDateString()+' '+date.toLocaleTimeString();
+    return date.toLocaleDateString() + " " + date.toLocaleTimeString();
 }
 
 function usernameColor(username: string, seed = 0): string {
@@ -177,11 +178,11 @@ async function addMessage(message) {
     userElement.style.color = usernameColor(message.sender);
     userElement.textContent = await getUserName(message.sender);
     messageElement.appendChild(userElement);
-    const timestampElement = document.createElement('time');
-    timestampElement.setAttribute('datetime', message.timestamp);
+    const timestampElement = document.createElement("time");
+    timestampElement.setAttribute("datetime", message.timestamp);
     timestampElement.innerHTML = humanize(message.timestamp);
     messageElement.appendChild(timestampElement);
-    const contentElement = document.createElement('span');
+    const contentElement = document.createElement("span");
     contentElement.textContent = message.content;
     messageElement.appendChild(contentElement);
     chat.appendChild(messageElement);
