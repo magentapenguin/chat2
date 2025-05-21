@@ -164,19 +164,21 @@ function addMessage(message) {
     contentElement.textContent = message.content;
     messageElement.appendChild(contentElement);
     chat.appendChild(messageElement);
-    chat.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    chat.scrollTo({ top: chat.scrollHeight, behavior: 'auto' });
 }
 
 const { data, error } = await supabase
     .from('messages')
     .select('*')
     .order('timestamp', { ascending: false })
-    .limit(100);
+    .limit(50);
+
 if (error) {
     console.error('Error fetching messages:', error);
 }
 if (data) {
-    data.forEach((message) => {
+    
+    data.reverse().forEach((message) => {
         const parsedMessage = row2Msg(message);
         addMessage(parsedMessage);
     });

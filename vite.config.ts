@@ -5,6 +5,7 @@ export default defineConfig({
     tailwindcss(),
   ],
   server: {
-    allowedHosts: ['test.localhost', 'dev.cat5python.com'], // for hcaptcha
-  }
+    allowedHosts: ['dev.cat5python.com'], // for hcaptcha
+  },
+  base: '/chat2/',
 })
