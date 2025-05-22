@@ -199,11 +199,13 @@ if (error) {
     console.error("Error fetching messages:", error);
 }
 if (data) {
-    
-    data.reverse().forEach((message) => {
-        const parsedMessage = row2Msg(message);
-        addMessage(parsedMessage);
-    });
+    (async () => {
+        data.reverse();
+        for (const message of data) {
+            const parsedMessage = row2Msg(message);
+            await addMessage(parsedMessage);
+        }
+    })();
 }
 
 checkLogin().then((loggedIn) => {
