@@ -74,9 +74,10 @@ chatForm.addEventListener("submit", async (event) => {
         return;
     }
 
-    const { error } = await supabase
+    const { error, data } = await supabase
         .from("messages")
-        .insert([{ data: message, id: nanoid() }]);
+        .insert([{ data: message, id: nanoid() }])
+        .select();
     if (error) {
         console.error("Error inserting message:", error);
         showToast({
@@ -90,16 +91,26 @@ chatForm.addEventListener("submit", async (event) => {
         });
         return;
     }
+    if (data) {
+        chatForm.reset();
+        const message = row2Msg(
+            data[0] as dbTypes.Database["public"]["Tables"]["messages"]["Row"]
+        );
+        addMessage(message);
+    }
 });
 
 channel.on(
     "postgres_changes",
     { event: "INSERT", schema: "public", table: "messages" },
-    (payload) => {
+    async (payload) => {
         console.log("New message received:", payload);
+        if ((payload.new as dbTypes.Database["public"]["Tables"]["messages"]["Row"]).user_id === (await checkLoginUser())?.id) {
+            return;
+        }
         try {
             const message = row2Msg(
-                payload as unknown as dbTypes.Database["public"]["Tables"]["messages"]["Row"]
+                payload.new as dbTypes.Database["public"]["Tables"]["messages"]["Row"]
             );
             addMessage(message);
         } catch (error) {
@@ -115,16 +126,12 @@ channel.on(
             });
         }
     }
-);
+)
+.subscribe();
 
 function row2Msg(row: dbTypes.Database["public"]["Tables"]["messages"]["Row"]) {
-    const message = {
-        id: row.id,
-        content: row.data,
-        sender: row.user_id,
-        timestamp: new Date(row.timestamp).toLocaleString(),
-    };
-    return message;
+    row.timestamp = new Date(row.timestamp).toISOString();
+    return row;
 }
 
 const cyrb53 = (str: string, seed = 0): number => {
@@ -155,7 +162,12 @@ function usernameColor(username: string, seed = 0): string {
     return `hsl(${hue}, 50%, 50%)`;
 }
 
+let userCache: { [key: string]: string } = {};
+
 async function getUserName(userId: string) {
+    if (userCache[userId]) {
+        return userCache[userId];
+    }
     const { data, error } = await supabase
         .from("usernames")
         .select("username")
@@ -166,6 +178,7 @@ async function getUserName(userId: string) {
         return userId;
     }
     if (data) {
+        userCache[userId] = data.username;
         return data.username;
     }
     return userId;
@@ -175,8 +188,8 @@ async function addMessage(message) {
     const messageElement = document.createElement("div");
     messageElement.className = "message";
     const userElement = document.createElement("strong");
-    userElement.style.color = usernameColor(message.sender);
-    userElement.textContent = await getUserName(message.sender);
+    userElement.style.color = usernameColor(message.user_id);
+    userElement.textContent = await getUserName(message.user_id);
     messageElement.appendChild(userElement);
     const timestampElement = document.createElement("time");
     timestampElement.setAttribute("datetime", message.timestamp);
@@ -193,14 +206,14 @@ const { data, error } = await supabase
     .from('messages')
     .select('*')
     .order('timestamp', { ascending: false })
-    .limit(50);
+    .limit(500);
 
 if (error) {
     console.error("Error fetching messages:", error);
 }
 if (data) {
-    
-    data.reverse().forEach((message) => {
+    data.reverse();
+    data.forEach((message) => {
         const parsedMessage = row2Msg(message);
         addMessage(parsedMessage);
     });
