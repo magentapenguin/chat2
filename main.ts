@@ -76,7 +76,7 @@ chatForm.addEventListener("submit", async (event) => {
 
     const { error, data } = await supabase
         .from("messages")
-        .insert([{ data: message, id: nanoid() }])
+        .insert([{ content: message, id: nanoid() }])
         .select();
     if (error) {
         console.error("Error inserting message:", error);
@@ -175,6 +175,7 @@ async function getUserName(userId: string) {
         .single();
     if (error) {
         console.warn("Error fetching username:", error);
+        userCache[userId] = userId;
         return userId;
     }
     if (data) {
