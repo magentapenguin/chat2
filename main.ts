@@ -188,8 +188,8 @@ async function addMessage(message) {
     const messageElement = document.createElement("div");
     messageElement.className = "message";
     const userElement = document.createElement("strong");
-    userElement.style.color = usernameColor(message.user_id);
     userElement.textContent = await getUserName(message.user_id);
+    userElement.style.color = usernameColor(userElement.textContent!);
     messageElement.appendChild(userElement);
     const timestampElement = document.createElement("time");
     timestampElement.setAttribute("datetime", message.timestamp);
@@ -227,3 +227,4 @@ checkLogin().then((loggedIn) => {
     ) as HTMLFieldSetElement;
     chatFieldset.disabled = !loggedIn;
 });
+
