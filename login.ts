@@ -1,26 +1,41 @@
 import { supabase } from "./supabase-client";
 import { gsap } from "gsap";
-import { showToast } from "./utils";
+import { once, showToast, requireFinishedAsync } from "./utils";
 import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
-import { beginUsernameFlow } from "./usernames";
+import { beginUsernameFlow, doIHaveUsername } from "./usernames";
 
 gsap.registerPlugin(DrawSVGPlugin);
 
-async function login(email: string, password: string) {
+async function login(email: string, password: string, signUp = false) {
     const captcha = (window as any).hcaptcha.getResponse(); // @ts-ignore
 
     if (captcha) {
-        const { data, error } = await supabase.auth.signInWithPassword({
-            email,
-            password,
-            options: {
-                captchaToken: captcha,
-            },
-        });
-        if (error) {
-            throw error;
+        if (signUp) {
+            const { data, error } = await supabase.auth.signUp({
+                email,
+                password,
+                options: {
+                    captchaToken: captcha,
+                },
+            });
+            if (error) {
+                throw error;
+            } else {
+                return data;
+            }
         } else {
-            return data;
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email,
+                password,
+                options: {
+                    captchaToken: captcha,
+                },
+            });
+            if (error) {
+                throw error;
+            } else {
+                return data;
+            }
         }
     } else {
         throw new Error("Captcha not completed");
@@ -53,6 +68,12 @@ export async function checkLoginUser() {
         return user;
     }
     return null;
+}
+
+export function onAuthChange(callback: (loggedIn: boolean) => void) {
+    return supabase.auth.onAuthStateChange((event, session) => {
+        callback(!!session);
+    });
 }
 
 const loginDialog = document.getElementById("login-flow") as HTMLDivElement;
@@ -92,7 +113,13 @@ logoutButton.addEventListener("click", async () => {
     await logout();
 });
 
-checkLogin().then((loggedIn) => {
+requireFinishedAsync(async () => {
+    const loggedIn = await checkLogin();
+    logoutButton.hidden = !loggedIn;
+    loginButton.hidden = loggedIn;
+});
+
+onAuthChange((loggedIn) => {
     logoutButton.hidden = !loggedIn;
     loginButton.hidden = loggedIn;
 });
@@ -122,10 +149,18 @@ const loginCloseButton = loginDialog.querySelector(
 const loginCompleteContinueButton = document.getElementById(
     "login-complete-continue"
 ) as HTMLButtonElement;
-loginCompleteContinueButton.addEventListener("click", () => {
+const loginCompleteMessage = document.getElementById(
+    "login-complete-message"
+) as HTMLDivElement;
+const loginCompleteMessageNeedUsername = document.getElementById(
+    "login-complete-message-need-username"
+) as HTMLDivElement;
+loginCompleteContinueButton.addEventListener("click", async () => {
     loginDialog.hidden = true;
     reset();
-    beginUsernameFlow(); // Start the username flow after login completion
+    if (await doIHaveUsername()) {
+        beginUsernameFlow(); // Start the username flow after login completion
+    }
 });
 loginCloseButton.addEventListener("click", () => {
     loginDialog.hidden = true;
@@ -141,31 +176,42 @@ function reset() {
     loginStep1Form.reset();
 }
 
-loginStep1Form.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const formData = new FormData(loginStep1Form);
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-    try {
-        loginStep1Form.hidden = true;
-        loginLoading.hidden = false;
-        loginError.hidden = true;
-        await login(email, password);
-        loginLoading.hidden = true;
-        loginComplete.hidden = false;
-        gsap.fromTo(
-            "#login-complete-svg path",
-            { drawSVG: "0% 0%" },
-            { drawSVG: "100% 0%", duration: 2, ease: "power2.inOut" }
-        );
-    } catch (error) {
-        loginStep1Form.hidden = false;
-        console.error("Error during login step 1:", error);
-        loginError.hidden = false;
-        loginError.innerText = "Error: " + error.message;
-    } finally {
-        loginLoading.hidden = true;
-        (window as any).hcaptcha.reset(); // @ts-ignore
-        loginStep1Form.reset();
-    }
-});
+once(() => {
+    loginStep1Form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const formData = new FormData(loginStep1Form);
+
+        const email = formData.get("email") as string;
+        const password = formData.get("password") as string;
+        const signUp = (event?.submitter as HTMLButtonElement | null)?.value === "signup";
+        try {
+            loginStep1Form.hidden = true;
+            loginLoading.hidden = false;
+            loginError.hidden = true;
+            await login(email, password, signUp);
+            loginLoading.hidden = true;
+            loginComplete.hidden = false;
+            if (await doIHaveUsername()) {
+                loginCompleteMessageNeedUsername.hidden = true;
+                loginCompleteMessage.hidden = false;
+            }
+            gsap.fromTo(
+                "#login-complete-svg path",
+                { drawSVG: "0% 0%" },
+                { drawSVG: "100% 0%", duration: 2, ease: "power2.inOut" }
+            );
+        } catch (error) {
+            loginStep1Form.hidden = false;
+            console.error(
+                `Error during ${signUp ? "signup" : "login"} step 1:`,
+                error
+            );
+            loginError.hidden = false;
+            loginError.innerText = "Error: " + error.message;
+        } finally {
+            loginLoading.hidden = true;
+            (window as any).hcaptcha.reset(); // @ts-ignore
+            loginStep1Form.reset();
+        }
+    });
+}, "login-flow-loaded");

@@ -6,8 +6,7 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-export type Database = {
-  graphql_public: {
+export type Database = {  graphql_public: {
     Tables: {
       [_ in never]: never
     }
@@ -31,27 +30,42 @@ export type Database = {
     CompositeTypes: {
       [_ in never]: never
     }
-  }
+  },
   public: {
     Tables: {
       messages: {
         Row: {
-          data: string
+          content: string
           id: string
           timestamp: string
           user_id: string
         }
         Insert: {
-          data: string
+          content: string
           id: string
           timestamp?: string
           user_id?: string
         }
         Update: {
-          data?: string
+          content?: string
           id?: string
           timestamp?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      usernames: {
+        Row: {
+          user_id: string
+          username: string
+        }
+        Insert: {
+          user_id?: string
+          username: string
+        }
+        Update: {
+          user_id?: string
+          username?: string
         }
         Relationships: []
       }

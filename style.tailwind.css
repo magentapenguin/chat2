@@ -2,7 +2,7 @@
 @import "inter-ui/inter.css";
 
 @theme {
-    --default-font-family: 'Inter', system-ui, sans-serif;
+    --default-font-family: "Inter", system-ui, sans-serif;
     --font-sans: var(--default-font-family);
     --text-shadow-glow: 0 0 4px --alpha(currentColor / 0.4);
 }
@@ -16,6 +16,12 @@
     }
     .btn.danger {
         @apply bg-red-600 hover:bg-red-700 border-red-800 dark:bg-red-700 dark:hover:bg-red-800 dark:border-red-900;
+    }
+    label.btn:has(input:checked) {
+        @apply bg-emerald-600 border-emerald-800 dark:bg-emerald-800 dark:border-emerald-700;
+    }
+    label.btn.danger:has(input:checked) {
+        @apply bg-rose-600 border-rose-800 dark:bg-rose-700 dark:border-rose-900;
     }
     .input {
         @apply border border-gray-400 rounded-lg p-1 w-full dark:border-gray-800 user-invalid:border-red-500 dark:user-invalid:border-red-700;
@@ -39,9 +45,10 @@
         @apply fixed top-0 left-0 z-80 p-2 flex flex-col gap-2;
     }
     .toast {
-        @apply p-2 w-full max-w-sm bg-gray-900 border-l-4 text-white cursor-default rounded-sm;
+        @apply p-2 w-full max-w-sm bg-gray-900 text-white border-l-4 cursor-default rounded-sm;
         animation: slide-in 0.3s ease-in-out forwards;
     }
+
     .toast > strong {
         @apply font-semibold flex justify-between;
     }
@@ -66,8 +73,6 @@
     }
     .message {
         @apply bg-gray-100 dark:bg-gray-950/50 text-gray-900 dark:text-gray-100 p-2 rounded-lg grid border border-gray-200 dark:border-gray-900 not-dark:shadow-sm dark:inset-shadow-sm dark:inset-shadow-gray-800/30;
-        --tw-inset-shadow: inset 0 0 4px var(--tw-inset-shadow-color, rgb(0 0 0 / 0.05));
-        @apply bg-gray-100 dark:bg-gray-900/50 text-gray-900 dark:text-gray-100 p-2 rounded-lg grid border border-gray-200 dark:border-gray-900 not-dark:shadow-sm dark:inset-shadow-sm dark:inset-shadow-gray-800/30;
         --tw-inset-shadow: inset 0 0 4px
             var(--tw-inset-shadow-color, rgb(0 0 0 / 0.05));
         grid-template-areas: "user timestamp" "message message";
@@ -85,7 +90,7 @@
         grid-area: user;
     }
     .message > span {
-        @apply text-sm text-gray-900 dark:text-gray-100;
+        @apply text-sm text-gray-900 dark:text-gray-100 break-words;
         grid-area: message;
     }
     ::selection {

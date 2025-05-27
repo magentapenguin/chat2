@@ -93,3 +93,95 @@ export function animateElement(
         return Promise.resolve(false);
     }
 }
+export const cyrb53 = (str: string, seed = 0): number => {
+    let h1 = 0xdeadbeef ^ seed,
+        h2 = 0x41c6ce57 ^ seed;
+    for (let i = 0, ch; i < str.length; i++) {
+        ch = str.charCodeAt(i);
+        h1 = Math.imul(h1 ^ ch, 2654435761);
+        h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507);
+    h1 ^= Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507);
+    h2 ^= Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+
+    return 4294967296 * (2097151 & h2) + (h1 >>> 0);
+};
+export function humanize(date: string | Date): string {
+    if (typeof date === "string") {
+        date = new Date(date);
+    }
+    return date.toLocaleDateString() + " " + date.toLocaleTimeString();
+}
+
+export const loaded = new Promise<void>((resolve) => {
+    if (document.readyState === "complete" || document.readyState === "interactive") {
+        resolve();
+    } else {
+        document.addEventListener("DOMContentLoaded", () => resolve());
+    }
+});
+
+let calls = {};
+export const once = (func: Function, id: string) => {
+    if (calls[id]) {
+        return;
+    }
+    calls[id] = true;
+    func();
+}
+
+export function resetOnce(id: string) {
+    delete calls[id];
+}
+
+
+let finished = 0;
+let total = 0;
+const onAllFinishedCallbacks: (() => void)[] = [];
+export function onAllFinished(callback: () => void) {
+    onAllFinishedCallbacks.push(callback);
+}
+
+export function requireFinished(
+    callback: (done: () => void) => void,
+) {
+    total++;
+    try {
+        callback(() => {
+            finished++;
+            if (finished === total) {
+                onAllFinishedCallbacks.forEach((cb) => cb());
+                onAllFinishedCallbacks.length = 0; // Clear the callbacks
+            }
+        });
+    } catch (error) {
+        finished++;
+        console.error("Error in requireFinished callback:", error);
+    }
+}
+export function requireFinishedAsync(
+    callback: () => Promise<void>,
+) {
+    total++;
+    callback()
+        .then(() => {
+            finished++;
+            if (finished === total) {
+                onAllFinishedCallbacks.forEach((cb) => cb());
+                onAllFinishedCallbacks.length = 0; // Clear the callbacks
+            }
+        })
+        .catch((error) => {
+            finished++;
+            console.error("Error in requireFinishedAsync callback:", error);
+        });
+}
+
+
+export function resetFinished() {
+    finished = 0;
+    total = 0;
+}
+

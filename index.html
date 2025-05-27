@@ -36,6 +36,11 @@
             >
                 <!-- Chat messages will be appended here -->
             </div>
+            <audio
+                id="notification-sound"
+                src="notif.mp3"
+                preload="auto"
+            ></audio>
             <form class="flex items-stretch mt-4 gap-1" id="chat-form">
                 <fieldset disabled class="contents group">
                     <input
@@ -72,6 +77,10 @@
                 class="flex items-stretch flex-col gap-1 flex-1"
                 id="username-form"
             >
+                <p>
+                    You need to set a username before you can start chatting.
+                    Please enter your desired username below.
+                </p>
                 <label
                     for="username-input"
                     class="text-gray-700 dark:text-gray-300"
@@ -83,11 +92,18 @@
                     class="input"
                     placeholder="Enter your username..."
                     required
+                    minlength="3"
+                    maxlength="20"
                     autocomplete="off"
                     name="username"
                 />
                 <div class="flex-auto"></div>
                 <button class="btn" type="submit">Set Username</button>
+                <div
+                    id="username-error-message"
+                    class="text-red-500"
+                    hidden
+                ></div>
             </form>
         </div>
         <div
@@ -110,8 +126,7 @@
                 <label
                     for="email-input"
                     class="text-gray-700 dark:text-gray-300"
-                    >Email:</label
-                >
+                    >Email:</label>
                 <input
                     type="email"
                     id="email-input"
@@ -124,8 +139,7 @@
                 <label
                     for="password-input"
                     class="text-gray-700 dark:text-gray-300"
-                    >Password:</label
-                >
+                    >Password:</label>
                 <input
                     type="password"
                     id="password-input"
@@ -137,7 +151,10 @@
                 />
                 <div class="flex-auto"></div>
                 <div id="login-captcha" class="flex justify-center mt-2"></div>
-                <button class="btn" type="submit">Login</button>
+                <div class="flex gap-1 justify-stretch">
+                    <button class="btn flex-1" type="submit" value="login" >Login</button>
+                    <button class="btn flex-1" type="submit" value="signup">Sign Up</button>
+                </div>
             </form>
             <div
                 id="login-loading"
@@ -187,16 +204,15 @@
                     </g>
                 </svg>
                 <h2 class="text-2xl font-bold mb-4">Login Successful</h2>
-                <p class="text-gray-700 dark:text-gray-300 mb-4">
+                <p class="text-gray-700 dark:text-gray-300" id="login-complete-message" hidden>
+                    You have successfully logged in. You can now start chatting.
+                </p>
+                <p class="text-gray-700 dark:text-gray-300" id="login-complete-message-need-username">
                     You have successfully logged in. But you need to set a
                     username before you can start chatting.
                 </p>
                 <div class="flex-auto"></div>
-                <button
-                    id="login-complete-continue"
-                    class="btn"
-                    type="button"
-                >
+                <button id="login-complete-continue" class="btn" type="button">
                     Continue
                 </button>
                 <button id="back-to-login" class="btn danger" type="button">
@@ -205,7 +221,7 @@
             </div>
             <div
                 id="login-error-message"
-                class="text-red-500 mt-2"
+                class="text-red-500"
                 hidden
             ></div>
         </div>
@@ -213,5 +229,28 @@
             id="dialog-bg"
             class="fixed inset-0 bg-neutral-800 opacity-50 z-40 hidden"
         ></div>
+        <div
+            id="loading-overlay"
+            class="fixed inset-0 bg-neutral-100/90 dark:bg-neutral-900/90 z-100 flex items-center justify-center text-black dark:text-white"
+        >
+            <div class="flex items-center gap-2">
+                <svg
+                    class="animate-spin h-5 w-5"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                >
+                    <circle
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        stroke-width="4"
+                        stroke-dasharray="30 1400"
+                    />
+                </svg>
+                <span>Loading...</span>
+            </div>
+        </div>
     </body>
 </html>
