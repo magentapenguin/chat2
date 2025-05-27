@@ -123,3 +123,9 @@ html:has(.dialog:not([hidden])) #dialog-bg {
         scrollbar-color: var(--color-gray-400) transparent;
     }
 }
+:focus:not(:focus-visible) {
+    outline: none;
+}
+:focus-visible {
+    @apply outline-none ring-2 ring-blue-500/50;
+}
