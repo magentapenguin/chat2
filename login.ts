@@ -2,18 +2,19 @@ import { supabase } from "./supabase-client";
 import { gsap } from "gsap";
 import { showToast } from "./utils";
 import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
+import { beginUsernameFlow } from "./usernames";
 
 gsap.registerPlugin(DrawSVGPlugin);
 
-async function login(email: string) {
+async function login(email: string, password: string) {
     const captcha = (window as any).hcaptcha.getResponse(); // @ts-ignore
 
     if (captcha) {
-        const { data, error } = await supabase.auth.signInWithOtp({
-            email: email,
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
             options: {
                 captchaToken: captcha,
-                emailRedirectTo: location.origin + location.pathname,
             },
         });
         if (error) {
@@ -89,7 +90,6 @@ backButton.addEventListener("click", () => {
 
 logoutButton.addEventListener("click", async () => {
     await logout();
-    location.reload();
 });
 
 checkLogin().then((loggedIn) => {
@@ -119,6 +119,14 @@ const loginComplete = document.getElementById(
 const loginCloseButton = loginDialog.querySelector(
     ".close"
 ) as HTMLButtonElement;
+const loginCompleteContinueButton = document.getElementById(
+    "login-complete-continue"
+) as HTMLButtonElement;
+loginCompleteContinueButton.addEventListener("click", () => {
+    loginDialog.hidden = true;
+    reset();
+    beginUsernameFlow(); // Start the username flow after login completion
+});
 loginCloseButton.addEventListener("click", () => {
     loginDialog.hidden = true;
 });
@@ -137,11 +145,12 @@ loginStep1Form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const formData = new FormData(loginStep1Form);
     const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
     try {
         loginStep1Form.hidden = true;
         loginLoading.hidden = false;
         loginError.hidden = true;
-        await login(email);
+        await login(email, password);
         loginLoading.hidden = true;
         loginComplete.hidden = false;
         gsap.fromTo(
@@ -149,12 +158,6 @@ loginStep1Form.addEventListener("submit", async (event) => {
             { drawSVG: "0% 0%" },
             { drawSVG: "100% 0%", duration: 2, ease: "power2.inOut" }
         );
-        supabase.auth.onAuthStateChange((event, session) => {
-            if (event === "SIGNED_IN") {
-                reset();
-                location.reload();
-            }
-        });
     } catch (error) {
         loginStep1Form.hidden = false;
         console.error("Error during login step 1:", error);

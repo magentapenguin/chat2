@@ -121,6 +121,20 @@
                     autocomplete="email"
                     name="email"
                 />
+                <label
+                    for="password-input"
+                    class="text-gray-700 dark:text-gray-300"
+                    >Password:</label
+                >
+                <input
+                    type="password"
+                    id="password-input"
+                    class="input"
+                    placeholder="Enter your password..."
+                    required
+                    autocomplete="current-password"
+                    name="password"
+                />
                 <div class="flex-auto"></div>
                 <div id="login-captcha" class="flex justify-center mt-2"></div>
                 <button class="btn" type="submit">Login</button>
@@ -172,15 +186,22 @@
                         <path d="m165.38 283.06 71.252 68.199 109.99-190.51" />
                     </g>
                 </svg>
-                A verification email has been sent to your email address. Please
-                check your inbox.
+                <h2 class="text-2xl font-bold mb-4">Login Successful</h2>
+                <p class="text-gray-700 dark:text-gray-300 mb-4">
+                    You have successfully logged in. But you need to set a
+                    username before you can start chatting.
+                </p>
                 <div class="flex-auto"></div>
+                <button
+                    id="login-complete-continue"
+                    class="btn"
+                    type="button"
+                >
+                    Continue
+                </button>
                 <button id="back-to-login" class="btn danger" type="button">
                     Back to Login
                 </button>
-                <span class="text-gray-500 dark:text-gray-600 text-sm"
-                    >If you don't see the email, check your spam folder.</span
-                >
             </div>
             <div
                 id="login-error-message"

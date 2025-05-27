@@ -76,7 +76,7 @@ chatForm.addEventListener("submit", async (event) => {
 
     const { error, data } = await supabase
         .from("messages")
-        .insert([{ data: message, id: nanoid() }])
+        .insert([{ content: message, id: nanoid() }])
         .select();
     if (error) {
         console.error("Error inserting message:", error);
@@ -175,6 +175,7 @@ async function getUserName(userId: string) {
         .single();
     if (error) {
         console.warn("Error fetching username:", error);
+        userCache[userId] = userId;
         return userId;
     }
     if (data) {
@@ -188,8 +189,8 @@ async function addMessage(message) {
     const messageElement = document.createElement("div");
     messageElement.className = "message";
     const userElement = document.createElement("strong");
-    userElement.style.color = usernameColor(message.user_id);
     userElement.textContent = await getUserName(message.user_id);
+    userElement.style.color = usernameColor(userElement.textContent!);
     messageElement.appendChild(userElement);
     const timestampElement = document.createElement("time");
     timestampElement.setAttribute("datetime", message.timestamp);
@@ -227,3 +228,4 @@ checkLogin().then((loggedIn) => {
     ) as HTMLFieldSetElement;
     chatFieldset.disabled = !loggedIn;
 });
+
