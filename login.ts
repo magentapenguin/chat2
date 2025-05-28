@@ -158,7 +158,7 @@ const loginCompleteMessageNeedUsername = document.getElementById(
 loginCompleteContinueButton.addEventListener("click", async () => {
     loginDialog.hidden = true;
     reset();
-    if (await doIHaveUsername()) {
+    if (!(await doIHaveUsername())) {
         beginUsernameFlow(); // Start the username flow after login completion
     }
 });
