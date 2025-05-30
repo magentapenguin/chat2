@@ -1,6 +1,6 @@
 import { supabase } from "./supabase-client";
 import { gsap } from "gsap";
-import { once, showToast, requireFinishedAsync } from "./utils";
+import { once, showToast, requireFinished } from "./utils";
 import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
 import { beginUsernameFlow, doIHaveUsername } from "./usernames";
 
@@ -113,11 +113,11 @@ logoutButton.addEventListener("click", async () => {
     await logout();
 });
 
-requireFinishedAsync(async () => {
+requireFinished(async () => {
     const loggedIn = await checkLogin();
     logoutButton.hidden = !loggedIn;
     loginButton.hidden = loggedIn;
-});
+}, "Login flow initialized");
 
 onAuthChange((loggedIn) => {
     logoutButton.hidden = !loggedIn;
@@ -191,15 +191,15 @@ once(() => {
             await login(email, password, signUp);
             loginLoading.hidden = true;
             loginComplete.hidden = false;
-            if (await doIHaveUsername()) {
-                loginCompleteMessageNeedUsername.hidden = true;
-                loginCompleteMessage.hidden = false;
-            }
             gsap.fromTo(
                 "#login-complete-svg path",
                 { drawSVG: "0% 0%" },
                 { drawSVG: "100% 0%", duration: 2, ease: "power2.inOut" }
             );
+            if (await doIHaveUsername()) {
+                loginCompleteMessageNeedUsername.hidden = true;
+                loginCompleteMessage.hidden = false;
+            }
         } catch (error) {
             loginStep1Form.hidden = false;
             console.error(

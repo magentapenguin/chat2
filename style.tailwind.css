@@ -24,7 +24,7 @@
         }
     }
     .dialog {
-        @apply bg-white border border-gray-200 rounded-lg p-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-200 z-50 dark:bg-gray-900 dark:border-gray-800 shadow;
+        @apply bg-white border border-gray-200 rounded-lg p-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-200 z-50 dark:bg-gray-950 dark:border-gray-800 shadow;
     }
     .close {
         @variant after {

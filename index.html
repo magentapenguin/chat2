@@ -151,7 +151,7 @@
                     name="password"
                 />
                 <div class="flex-auto"></div>
-                <div id="login-captcha" class="flex justify-center mt-2"></div>
+                <div id="login-captcha" class="my-1 ml-1"></div>
                 <div class="flex gap-1 justify-stretch">
                     <button class="btn flex-1" type="submit" value="login" >Login</button>
                     <button class="btn flex-1" type="submit" value="signup">Sign Up</button>
@@ -232,7 +232,7 @@
         ></div>
         <div
             id="loading-overlay"
-            class="fixed inset-0 bg-neutral-100/90 dark:bg-neutral-900/90 z-100 flex items-center justify-center text-black dark:text-white"
+            class="fixed inset-0 bg-neutral-100/90 dark:bg-neutral-900/90 z-100 flex flex-col gap-2 items-center justify-center text-black dark:text-white"
         >
             <div class="flex items-center gap-2">
                 <svg
@@ -252,6 +252,10 @@
                 </svg>
                 <span>Loading...</span>
             </div>
+            <div id="loading-message" class="text-gray-700 dark:text-gray-400"></div>
+            <noscript class="text-red-500">
+                JavaScript is required for this application to function properly. Please enable JavaScript in your browser settings.
+            </noscript>
         </div>
     </body>
 </html>
