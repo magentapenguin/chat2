@@ -2,7 +2,8 @@
 @import "inter-ui/inter.css";
 
 @theme {
-    --default-font-family: "Inter", system-ui, sans-serif;
+    --default-font-family: "Inter Variable", "Inter", system-ui, sans-serif;
+    --default-font-feature-settings: "frac", "cv08", "cv05", "cv04", "cv11";
     --font-sans: var(--default-font-family);
     --text-shadow-glow: 0 0 4px --alpha(currentColor / 0.4);
 }
