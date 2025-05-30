@@ -11,6 +11,7 @@
         <script src="main.ts" type="module"></script>
         <script src="login.ts" type="module"></script>
         <link rel="icon" href="icon.svg" type="image/svg+xml" />
+        <link rel="preconnect" href="https://piukosdnirsgphzdyjan.supabase.co" />
     </head>
     <body class="h-full">
         <div class="container mx-auto p-4 h-full flex flex-col">
@@ -45,15 +46,15 @@
                 <fieldset disabled class="contents group">
                     <input
                         type="text"
-                        class="input"
+                        class="input group-disabled:hidden"
                         placeholder="Type your message..."
                         required
                         autocomplete="off"
                         name="message"
                     />
-                    <button class="btn" type="submit">Send</button>
+                    <button class="btn group-disabled:hidden" type="submit">Send</button>
                     <small
-                        class="text-gray-500 dark:text-gray-600 text-sm hidden group-disabled:block"
+                        class="text-gray-700 dark:text-white text-sm hidden group-disabled:block bg-gray-500/10 p-2 rounded-lg flex-1"
                     >
                         Please log in to send messages.
                     </small>
@@ -150,7 +151,7 @@
                     name="password"
                 />
                 <div class="flex-auto"></div>
-                <div id="login-captcha" class="flex justify-center mt-2"></div>
+                <div id="login-captcha" class="my-1 ml-1"></div>
                 <div class="flex gap-1 justify-stretch">
                     <button class="btn flex-1" type="submit" value="login" >Login</button>
                     <button class="btn flex-1" type="submit" value="signup">Sign Up</button>
@@ -231,7 +232,7 @@
         ></div>
         <div
             id="loading-overlay"
-            class="fixed inset-0 bg-neutral-100/90 dark:bg-neutral-900/90 z-100 flex items-center justify-center text-black dark:text-white"
+            class="fixed inset-0 bg-neutral-100/90 dark:bg-neutral-900/90 z-100 flex flex-col gap-2 items-center justify-center text-black dark:text-white"
         >
             <div class="flex items-center gap-2">
                 <svg
@@ -251,6 +252,10 @@
                 </svg>
                 <span>Loading...</span>
             </div>
+            <div id="loading-message" class="text-gray-700 dark:text-gray-400"></div>
+            <noscript class="text-red-500">
+                JavaScript is required for this application to function properly. Please enable JavaScript in your browser settings.
+            </noscript>
         </div>
     </body>
 </html>

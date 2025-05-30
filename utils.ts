@@ -1,3 +1,4 @@
+import { nanoid } from "nanoid";
 export interface ToastOpts {
     title: string;
     message: string;
@@ -139,32 +140,32 @@ export function resetOnce(id: string) {
 
 let finished = 0;
 let total = 0;
+
+interface RequireFinishedData {
+    readableName?: string;
+    startTime: number;
+    endTime?: number;
+    error?: Error;
+}
+export let requireFinishedData: Record<string, RequireFinishedData> = {};
+
 const onAllFinishedCallbacks: (() => void)[] = [];
 export function onAllFinished(callback: () => void) {
     onAllFinishedCallbacks.push(callback);
 }
 
 export function requireFinished(
-    callback: (done: () => void) => void,
-) {
-    total++;
-    try {
-        callback(() => {
-            finished++;
-            if (finished === total) {
-                onAllFinishedCallbacks.forEach((cb) => cb());
-                onAllFinishedCallbacks.length = 0; // Clear the callbacks
-            }
-        });
-    } catch (error) {
-        finished++;
-        console.error("Error in requireFinished callback:", error);
-    }
-}
-export function requireFinishedAsync(
     callback: () => Promise<void>,
+    readableName?: string,
 ) {
     total++;
+    let id = nanoid();
+    requireFinishedData[id] = {
+        readableName,
+        startTime: performance.now(),
+        endTime: undefined,
+    };
+
     callback()
         .then(() => {
             finished++;
@@ -175,7 +176,12 @@ export function requireFinishedAsync(
         })
         .catch((error) => {
             finished++;
-            console.error("Error in requireFinishedAsync callback:", error);
+            requireFinishedData[id].error = error;
+            console.error("Error in requireFinished callback:", error);
+        })
+        .finally(() => {
+            requireFinishedData[id].endTime = performance.now();
+            console.debug(`Finished ${readableName || "task"} (${id}), took ${requireFinishedData[id].endTime - requireFinishedData[id].startTime}ms`);
         });
 }
 
@@ -185,3 +191,15 @@ export function resetFinished() {
     total = 0;
 }
 
+export function isDarkMode(): boolean {
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+}
+
+export function shuffle<T>(array: T[]): T[] {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+}

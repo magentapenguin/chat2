@@ -10,22 +10,22 @@
 
 @layer components {
     .btn {
-        @apply rounded-lg p-1 px-1.5 text-green-500 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 cursor-pointer bg-green-500/20 hover:bg-green-500/30;
+        @apply rounded-lg p-1 px-1.5 text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 cursor-pointer bg-green-500/20 hover:bg-green-500/30;
         @variant disabled {
-            @apply bg-gray-200 text-gray-500 border-gray-400 cursor-not-allowed dark:bg-gray-950 dark:text-gray-400 dark:border-gray-800;
+            @apply text-gray-500 cursor-not-allowed dark:text-gray-400;
         }
     }
     .btn.danger {
-        @apply text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 bg-red-500/20 hover:bg-red-500/30;
+        @apply text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 bg-red-500/20 hover:bg-red-500/30;
     }
     .input {
-        @apply border border-gray-400 rounded-lg p-1 w-full dark:border-gray-800 user-invalid:border-red-500 dark:user-invalid:border-red-700;
+        @apply bg-gray-500/10 rounded-lg p-1 w-full user-invalid:bg-red-500/20;
         @variant disabled {
             @apply bg-gray-200 text-gray-500 cursor-not-allowed dark:bg-gray-950 dark:text-gray-400 dark:border-gray-800;
         }
     }
     .dialog {
-        @apply bg-white border border-gray-200 rounded-lg p-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-200 z-50 dark:bg-gray-900 dark:border-gray-800 shadow;
+        @apply bg-white border border-gray-200 rounded-lg p-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-200 z-50 dark:bg-gray-950 dark:border-gray-800 shadow;
     }
     .close {
         @variant after {

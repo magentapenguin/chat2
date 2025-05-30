@@ -1,7 +1,7 @@
 import { checkLoginUser } from "./login";
 import { usernameColor } from "./main";
 import { supabase } from "./supabase-client";
-import { requireFinishedAsync, showToast } from "./utils";
+import { requireFinished, showToast } from "./utils";
 
 const usernameDialog = document.getElementById(
     "you-need-a-username"
@@ -101,17 +101,19 @@ usernameForm.addEventListener("submit", async (event) => {
 });
 
 export async function doIHaveUsername(): Promise<boolean> {
-    const { data: user, error } = await supabase.auth.getUser();
+    const { data, error } = await supabase.auth.getSession();
+
     if (error) {
         console.error("Error getting user:", error);
         return false;
     }
+    const user = data.session?.user;
     if (user) {
         // Check if the user has a username
         const { data: username, error: usernameError } = await supabase
             .from("usernames")
             .select("username")
-            .eq("user_id", user.user.id)
+            .eq("user_id", user.id)
             .single();
         if (usernameError) {
             console.error("Error checking username:", usernameError);
@@ -125,10 +127,10 @@ export async function doIHaveUsername(): Promise<boolean> {
     return false;
 }
 
-requireFinishedAsync(async () => {
+requireFinished(async () => {
     const hasUsername = await doIHaveUsername();
     if (!hasUsername && await checkLoginUser()) {
         // If the user does not have a username, show the dialog
         beginUsernameFlow();
     }
-});
+}, "Check Username Flow");
