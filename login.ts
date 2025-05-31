@@ -2,7 +2,7 @@ import { supabase } from "./supabase-client";
 import { gsap } from "gsap";
 import { once, showToast, requireFinished } from "./utils";
 import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
-import { beginUsernameFlow, doIHaveUsername } from "./usernames";
+import { beginUsernameFlow, doIHaveUsername, probablyHasUsername } from "./usernames";
 
 gsap.registerPlugin(DrawSVGPlugin);
 
@@ -55,7 +55,13 @@ export async function checkLogin() {
     }
     return false;
 }
-export async function checkLoginUser() {
+export async function checkLoginUser(fast: boolean = false) {
+    // DANGER: Fast mode skips fetching user details and is easier to spoof.
+    if (fast) {
+        // If fast is true, we only check if the user is logged in without fetching user details
+        const { data: { session } } = await supabase.auth.getSession();
+        return session?.user;
+    }
     const {
         data: { user },
         error,
@@ -196,7 +202,7 @@ once(() => {
                 { drawSVG: "0% 0%" },
                 { drawSVG: "100% 0%", duration: 2, ease: "power2.inOut" }
             );
-            if (await doIHaveUsername()) {
+            if (probablyHasUsername) {
                 loginCompleteMessageNeedUsername.hidden = true;
                 loginCompleteMessage.hidden = false;
             }

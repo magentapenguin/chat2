@@ -97,6 +97,7 @@
                     maxlength="20"
                     autocomplete="off"
                     name="username"
+                    pattern="^[a-zA-Z0-9_]+$"
                 />
                 <div class="flex-auto"></div>
                 <button class="btn" type="submit">Set Username</button>
@@ -228,11 +229,11 @@
         </div>
         <div
             id="dialog-bg"
-            class="fixed inset-0 bg-neutral-800 opacity-50 z-40 hidden"
+            class="fixed inset-0 bg-neutral-800/50 z-40 hidden backdrop-blur-xs"
         ></div>
         <div
             id="loading-overlay"
-            class="fixed inset-0 bg-neutral-100/90 dark:bg-neutral-900/90 z-100 flex flex-col gap-2 items-center justify-center text-black dark:text-white"
+            class="fixed inset-0 bg-neutral-300/90 dark:bg-neutral-900/90 z-100 flex flex-col gap-2 items-center justify-center text-neutral-800 dark:text-white backdrop-blur-sm font-semibold"
         >
             <div class="flex items-center gap-2">
                 <svg
@@ -252,7 +253,7 @@
                 </svg>
                 <span>Loading...</span>
             </div>
-            <div id="loading-message" class="text-gray-700 dark:text-gray-400"></div>
+            <div id="loading-message" class="text-gray-700 dark:text-gray-400 font-normal"></div>
             <noscript class="text-red-500">
                 JavaScript is required for this application to function properly. Please enable JavaScript in your browser settings.
             </noscript>

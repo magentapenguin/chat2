@@ -247,7 +247,6 @@ once(async () => {
                 await addMessage(parsedMessage);
             }
         }
-        
     }, "Load messages from database");
 }, "main-chat-init");
 
@@ -300,7 +299,7 @@ async function addMessage(message) {
     timestampElement.innerHTML = humanize(message.timestamp);
     messageElement.appendChild(timestampElement);
 
-    const user = await checkLoginUser();
+    const user = await checkLoginUser(true);
     const actions = document.createElement("div");
     actions.className = "message-actions";
     const deleteButton = document.createElement("button");
@@ -386,14 +385,11 @@ async function addMessage(message) {
         contentElement.textContent = newContent;
     });
     actions.appendChild(editButton);
-    if (
-        (await checkLogin()) &&
-        message.user_id === user?.id
-    ) {
-        messageElement.appendChild(actions);
-    }
     const contentElement = document.createElement("span");
     contentElement.textContent = message.content;
+    if ((await checkLogin()) && message.user_id === user?.id) {
+        messageElement.appendChild(actions);
+    }
     messageElement.appendChild(contentElement);
     chat.appendChild(messageElement);
     chat.scrollTo({ top: chat.scrollHeight, behavior: "auto" });

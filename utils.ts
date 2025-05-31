@@ -203,3 +203,79 @@ export function shuffle<T>(array: T[]): T[] {
     }
     return shuffled;
 }
+
+interface DialogOptions {
+    closeOnEscape?: boolean;
+    closeOnOutsideClick?: boolean;
+    closeButtonSelector?: string;
+    dialogBackgroundSelector?: string;
+}
+
+export class Dialog {
+    protected closeButton: HTMLButtonElement | null = null;
+
+    get open() {
+        return !this.dialogElement.hidden;
+    }
+    set open(value: boolean) {
+        if (value) {
+            this.show();
+        } else {
+            this.hide();
+        }
+    }
+    get element() {
+        return this.dialogElement;
+    }
+
+    // For controlling an element that acts as a dialog.
+    constructor(protected dialogElement: HTMLElement, protected opts: DialogOptions = {
+        closeOnEscape: true,
+        closeOnOutsideClick: true,
+        closeButtonSelector: ".close",
+        dialogBackgroundSelector: "#dialog-bg",
+    }) {
+        this.dialogElement.hidden = true; // Start hidden
+        if (this.opts.closeOnEscape) {
+            // Add event listener for Escape key
+            document.addEventListener("keydown", (event) => {
+                if (event.key === "Escape") {
+                    this.hide();
+                }
+            });
+        }
+        if (this.opts.closeOnOutsideClick && this.opts.dialogBackgroundSelector) {
+            // Add event listener for clicks outside the dialog
+            const dialogBackground = document.querySelector(this.opts.dialogBackgroundSelector) as HTMLElement | null;
+            if (dialogBackground) {
+                dialogBackground.addEventListener("click", (event) => {
+                    if (event.target === dialogBackground) {
+                        this.hide();
+                    }
+                });
+            } else {
+                throw new Error(`Dialog background element not found: ${this.opts.dialogBackgroundSelector}`);
+            }
+        } 
+        
+        if (this.opts.closeButtonSelector) {
+            this.closeButton = this.dialogElement.querySelector(this.opts.closeButtonSelector) as HTMLButtonElement | null;
+            if (!this.closeButton) {
+                throw new Error(`Close button not found: ${this.opts.closeButtonSelector}`);
+            }
+            // Add event listener to the close button
+            this.closeButton.addEventListener("click", () => this.hide());
+        }
+    }
+
+    show() {
+        this.dialogElement.hidden = false;
+    }
+
+    hide() {
+        this.dialogElement.hidden = true;
+        if (this.closeButton) {
+            this.closeButton.blur(); // Remove focus from the close button
+        }
+    }
+}

@@ -1,4 +1,4 @@
-import { checkLoginUser } from "./login";
+import { checkLogin, checkLoginUser } from "./login";
 import { usernameColor } from "./main";
 import { supabase } from "./supabase-client";
 import { requireFinished, showToast } from "./utils";
@@ -21,6 +21,12 @@ const usernameInput = document.getElementById(
 usernameInput.addEventListener("input", () => {
     usernameInput.style.color = usernameColor(usernameInput.value);
     usernameInput.style.borderColor = usernameColor(usernameInput.value);
+});
+
+export let probablyHasUsername = false;
+// Check if the user has a username when the page loads
+document.addEventListener("DOMContentLoaded", async () => {
+    probablyHasUsername = await doIHaveUsername();
 });
 
 // Add event listener for the close button
@@ -98,6 +104,7 @@ usernameForm.addEventListener("submit", async (event) => {
     // Username set successfully
     usernameForm.reset();
     usernameDialog.hidden = true;
+    probablyHasUsername = true; // Update the flag
 });
 
 export async function doIHaveUsername(): Promise<boolean> {
@@ -121,6 +128,7 @@ export async function doIHaveUsername(): Promise<boolean> {
         }
         if (username) {
             // User has a username
+            probablyHasUsername = true;
             return true;
         }
     }
@@ -129,7 +137,7 @@ export async function doIHaveUsername(): Promise<boolean> {
 
 requireFinished(async () => {
     const hasUsername = await doIHaveUsername();
-    if (!hasUsername && await checkLoginUser()) {
+    if (!hasUsername && await checkLogin()) {
         // If the user does not have a username, show the dialog
         beginUsernameFlow();
     }
