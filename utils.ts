@@ -270,6 +270,7 @@ export class Dialog {
 
     show() {
         this.dialogElement.hidden = false;
+        this.dialogElement.focus();
     }
 
     hide() {

@@ -1,6 +1,6 @@
 import { supabase } from "./supabase-client";
 import { gsap } from "gsap";
-import { once, showToast, requireFinished } from "./utils";
+import { once, showToast, requireFinished, Dialog } from "./utils";
 import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
 import { beginUsernameFlow, doIHaveUsername, getUsername, probablyHasUsername } from "./usernames";
 import { posthog } from "./posthog";
@@ -83,7 +83,7 @@ export function onAuthChange(callback: (loggedIn: boolean) => void) {
     });
 }
 
-const loginDialog = document.getElementById("login-flow") as HTMLDivElement;
+const loginDialogElem = document.getElementById("login-flow") as HTMLDivElement;
 const loginButton = document.getElementById(
     "login-button"
 ) as HTMLButtonElement;
@@ -93,6 +93,7 @@ const logoutButton = document.getElementById(
 const backButton = document.getElementById(
     "back-to-login"
 ) as HTMLButtonElement;
+const loginDialog = new Dialog(loginDialogElem);
 
 const navNoUser = document.getElementById(
     "nav-nouser"
@@ -149,12 +150,7 @@ onAuthChange(async (loggedIn) => {
 });
 
 loginButton.addEventListener("click", () => {
-    loginDialog.hidden = false;
-});
-loginDialog.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") {
-        loginDialog.hidden = true;
-    }
+    loginDialogElem.hidden = false;
 });
 
 const loginStep1Form = document.getElementById(
@@ -167,9 +163,6 @@ const loginLoading = document.getElementById("login-loading") as HTMLDivElement;
 const loginComplete = document.getElementById(
     "login-complete"
 ) as HTMLDivElement;
-const loginCloseButton = loginDialog.querySelector(
-    ".close"
-) as HTMLButtonElement;
 const loginCompleteContinueButton = document.getElementById(
     "login-complete-continue"
 ) as HTMLButtonElement;
@@ -179,19 +172,16 @@ const loginCompleteMessage = document.getElementById(
 const loginCompleteMessageNeedUsername = document.getElementById(
     "login-complete-message-need-username"
 ) as HTMLDivElement;
+
+
 loginCompleteContinueButton.addEventListener("click", async () => {
-    loginDialog.hidden = true;
     reset();
     if (!(await doIHaveUsername())) {
         beginUsernameFlow(); // Start the username flow after login completion
     }
 });
-loginCloseButton.addEventListener("click", () => {
-    loginDialog.hidden = true;
-});
 
 function reset() {
-    loginDialog.hidden = true;
     loginStep1Form.hidden = false;
     loginError.hidden = true;
     loginLoading.hidden = true;
@@ -213,6 +203,7 @@ once(() => {
             loginLoading.hidden = false;
             loginError.hidden = true;
             await login(email, password, signUp);
+            loginStep1Form.reset();
             loginLoading.hidden = true;
             loginComplete.hidden = false;
             gsap.fromTo(
@@ -235,7 +226,6 @@ once(() => {
         } finally {
             loginLoading.hidden = true;
             (window as any).hcaptcha.reset(); // @ts-ignore
-            loginStep1Form.reset();
         }
     });
 }, "login-flow-loaded");

@@ -12,7 +12,7 @@
 
 @layer components {
     .btn {
-        @apply rounded-lg p-1 px-1.5 text-green-700 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 cursor-pointer bg-green-500/20 hover:bg-green-500/30;
+        @apply rounded-lg p-1 px-1.5 text-green-800 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300 cursor-pointer bg-green-500/20 hover:bg-green-500/30;
         @variant disabled {
             @apply text-gray-500 cursor-not-allowed dark:text-gray-400;
         }
@@ -33,13 +33,16 @@
         }
     }
     .checkbox {
-        @apply bg-no-repeat bg-center bg-contain rounded-lg w-[1.5em] h-[1.5em] cursor-pointer appearance-none bg-[url("/assets/check.svg")] hover:brightness-125;
+        @apply bg-none rounded-md size-[1.3em] cursor-pointer appearance-none relative border-2 border-gray-400 dark:border-gray-700 me-1 after:inset-0 after:absolute;
         image-rendering: crisp-edges;
         @variant disabled {
             @apply grayscale-75 pointer-events-none cursor-not-allowed;
         }
         @variant checked {
-            @apply bg-[url("/assets/check-checked.svg")] dark:bg-[url("/assets/check-checked-dark.svg")];
+            @apply after:content-[url("/assets/check-checked.svg")] dark:after:content-[url("/assets/check-checked-dark.svg")] bg-emerald-700 dark:bg-emerald-500 border-0;
+        }
+        @variant indeterminate {
+            @apply after:content-[url("/assets/check-indeterminate.svg")] dark:after:content-[url("/assets/check-indeterminate-dark.svg")] bg-none border-2;
         }
     }
     .dialog {
@@ -133,6 +136,13 @@
         @variant disabled {
             @apply text-gray-500 cursor-not-allowed dark:text-gray-400;
         }
+    }
+    label {
+        @apply text-gray-800 dark:text-gray-200;
+        user-select: none;
+    }
+    label:has(.checkbox) {
+        @apply flex items-center gap-1;
     }
 }
 @keyframes slide-in {
