@@ -1,14 +1,11 @@
 import { checkLogin, checkLoginUser } from "./login";
 import { usernameColor } from "./main";
 import { supabase } from "./supabase-client";
-import { requireFinished, showToast } from "./utils";
+import { requireFinished, showToast, Dialog } from "./utils";
 
-const usernameDialog = document.getElementById(
+const usernameDialogElem = document.getElementById(
     "you-need-a-username"
 ) as HTMLElement;
-const usernameDialogCloseButton = usernameDialog.querySelector(
-    ".close"
-) as HTMLButtonElement;
 const usernameForm = document.getElementById(
     "username-form"
 ) as HTMLFormElement;
@@ -23,20 +20,17 @@ usernameInput.addEventListener("input", () => {
     usernameInput.style.borderColor = usernameColor(usernameInput.value);
 });
 
+const usernameDialog = new Dialog(usernameDialogElem);
+
 export let probablyHasUsername = false;
 // Check if the user has a username when the page loads
 document.addEventListener("DOMContentLoaded", async () => {
     probablyHasUsername = await doIHaveUsername();
 });
 
-// Add event listener for the close button
-usernameDialogCloseButton.addEventListener("click", () => {
-    usernameDialog.hidden = true;
-});
-
 export async function beginUsernameFlow() {
     // Show the username dialog
-    usernameDialog.hidden = false;
+    usernameDialog.show();
     usernameForm.reset(); // Reset the form
 }
 
@@ -103,7 +97,7 @@ usernameForm.addEventListener("submit", async (event) => {
     console.log("Username set successfully:", data);
     // Username set successfully
     usernameForm.reset();
-    usernameDialog.hidden = true;
+    usernameDialog.hide();
     probablyHasUsername = true; // Update the flag
 });
 
