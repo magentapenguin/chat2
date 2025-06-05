@@ -15,6 +15,41 @@ import { supabase, Types as dbTypes } from "./supabase-client";
 
 export const nanoid = customAlphabet("1234567890abcdef", 30);
 
+const loadingMessages = shuffle([
+    "Thinking about the meaning of life...",
+    "Loading the secrets of the universe...",
+    "Summoning the chat spirits...",
+    "Consulting the ancient scrolls...",
+    "Bugging the database for answers...",
+    "Asking the AI for help...",
+]);
+
+const loadingMessageElement = document.getElementById(
+    "loading-message"
+) as HTMLDivElement;
+
+let loadingIndex = 0;
+
+function updateLoadingMessage() {
+    loadingMessageElement.textContent =
+        loadingMessages[loadingIndex % loadingMessages.length];
+    loadingIndex++;
+}
+
+const interval = setInterval(() => {
+    updateLoadingMessage();
+}, 1500);
+updateLoadingMessage();
+
+onAllFinished(() => {
+    const overlay = document.getElementById(
+        "loading-overlay"
+    ) as HTMLDivElement;
+    overlay.hidden = true;
+    clearInterval(interval);
+});
+
+
 declare const hcaptcha: any;
 
 once(() => {
@@ -404,37 +439,3 @@ requireFinished(async () => {
         chatFieldset.disabled = !loggedIn;
     });
 }, "Chat init");
-
-const loadingMessages = shuffle([
-    "Thinking about the meaning of life...",
-    "Loading the secrets of the universe...",
-    "Summoning the chat spirits...",
-    "Consulting the ancient scrolls...",
-    "Bugging the database for answers...",
-    "Asking the AI for help...",
-]);
-
-const loadingMessageElement = document.getElementById(
-    "loading-message"
-) as HTMLDivElement;
-
-let loadingIndex = 0;
-
-function updateLoadingMessage() {
-    loadingMessageElement.textContent =
-        loadingMessages[loadingIndex % loadingMessages.length];
-    loadingIndex++;
-}
-
-const interval = setInterval(() => {
-    updateLoadingMessage();
-}, 1500);
-updateLoadingMessage();
-
-onAllFinished(() => {
-    const overlay = document.getElementById(
-        "loading-overlay"
-    ) as HTMLDivElement;
-    overlay.hidden = true;
-    clearInterval(interval);
-});
