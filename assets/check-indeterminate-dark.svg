@@ -1,11 +1,11 @@
 <svg
     viewBox="0 0 512 512"
     xmlns="http://www.w3.org/2000/svg"
-    alt="Checkbox with a checkmark"
+    alt="Checkbox with an indeterminate state"
 >
-    <path d="m165.38 283.06 71.252 68.199 109.99-190.51"
+    <line x1="128" y1="220" x2="384" y2="220"
         fill="none"
-        stroke="oklch(97.9% 0.021 166.113)"
+        stroke="oklch(37.3% 0.034 259.733)"
         stroke-linecap="round"
         stroke-linejoin="round"
         stroke-width="60" />
