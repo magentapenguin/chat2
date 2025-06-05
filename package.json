@@ -11,8 +11,13 @@
     "gsap": "^3.13.0",
     "inter-ui": "^4.1.0",
     "nanoid": "^5.1.5",
+    "posthog-js": "^1.249.3",
     "tailwindcss": "^4.1.6",
     "vite": "^6.3.5"
   },
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "prettier": "^3.5.3",
+    "prettier-plugin-tailwindcss": "^0.6.12"
+  }
 }

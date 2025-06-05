@@ -1,7 +1,7 @@
-<!DOCTYPE html>
+<!doctype html>
 <html
     lang="en"
-    class="h-full bg-white dark:bg-gray-950 text-black dark:text-white"
+    class="h-full bg-white text-black dark:bg-gray-950 dark:text-white"
 >
     <head>
         <meta charset="UTF-8" />
@@ -23,8 +23,8 @@
         />
     </head>
     <body class="h-full">
-        <main class="container mx-auto p-4 h-full flex flex-col">
-            <header class="flex justify-between items-center mb-4">
+        <main class="container mx-auto flex h-full flex-col p-4">
+            <header class="mb-4 flex items-center justify-between">
                 <h1 class="text-2xl font-bold">Chat Application</h1>
                 <nav class="flex items-center gap-2">
                     <div id="nav-nouser">
@@ -39,8 +39,17 @@
                             type="button"
                             title="Profile"
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-[1.5em] align-[-0.25em] inline-block">
-                                <path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" clip-rule="evenodd" />
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                fill="currentColor"
+                                class="inline-block size-[1.5em] align-[-0.25em]"
+                            >
+                                <path
+                                    fill-rule="evenodd"
+                                    d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"
+                                    clip-rule="evenodd"
+                                />
                             </svg>
                         </button>
                         <button
@@ -55,7 +64,7 @@
             </header>
             <div
                 id="chat"
-                class="bg-gray-500/10 rounded-lg p-2 lg:h-96 not-lg:flex-auto overflow-y-scroll flex flex-col gap-2"
+                class="flex flex-col gap-2 overflow-y-scroll rounded-lg bg-gray-500/10 p-2 not-lg:flex-auto lg:h-96"
             >
                 <!-- Chat messages will be appended here -->
             </div>
@@ -64,8 +73,8 @@
                 src="notif.mp3"
                 preload="auto"
             ></audio>
-            <form class="flex items-stretch mt-4 gap-1" id="chat-form">
-                <fieldset disabled class="contents group">
+            <form class="mt-4 flex items-stretch gap-1" id="chat-form">
+                <fieldset disabled class="group contents">
                     <input
                         type="text"
                         class="input group-disabled:hidden"
@@ -78,7 +87,7 @@
                         Send
                     </button>
                     <small
-                        class="text-gray-700 dark:text-white text-sm hidden group-disabled:block bg-gray-500/10 p-2 rounded-lg flex-1"
+                        class="hidden flex-1 rounded-lg bg-gray-500/10 p-2 text-sm text-gray-700 group-disabled:block dark:text-white"
                     >
                         Please log in to send messages.
                     </small>
@@ -87,26 +96,26 @@
 
             <a
                 href="legal"
-                class="absolute bottom-3 right-4 text-neutral-600/80 hover:text-neutral-600 dark:text-neutral-400/80 underline dark:hover:text-neutral-400"
+                class="absolute right-4 bottom-3 text-neutral-600/80 underline hover:text-neutral-600 dark:text-neutral-400/80 dark:hover:text-neutral-400"
             >
                 Legal
             </a>
         </main>
         <div
             id="you-need-a-username"
-            class="mx-auto p-4 dialog flex flex-col items-stretch"
+            class="dialog mx-auto flex flex-col items-stretch p-4"
             hidden
         >
-            <header class="flex justify-between items-center mb-4">
+            <header class="mb-4 flex items-center justify-between">
                 <h1 class="text-2xl font-bold">Set Username</h1>
                 <button
-                    class="border-0 cursor-pointer close"
+                    class="close cursor-pointer border-0"
                     type="button"
                     title="Close"
                 ></button>
             </header>
             <form
-                class="flex items-stretch flex-col gap-1 flex-1"
+                class="flex flex-1 flex-col items-stretch gap-1"
                 id="username-form"
             >
                 <p>
@@ -141,19 +150,19 @@
         </div>
         <div
             id="login-flow"
-            class="mx-auto p-4 dialog flex flex-col items-stretch"
+            class="dialog mx-auto flex flex-col items-stretch p-4"
             hidden
         >
-            <header class="flex justify-between items-center mb-4">
+            <header class="mb-4 flex items-center justify-between">
                 <h1 class="text-2xl font-bold">Login</h1>
                 <button
-                    class="border-0 cursor-pointer close"
+                    class="close cursor-pointer border-0"
                     type="button"
                     title="Close"
                 ></button>
             </header>
             <form
-                class="flex items-stretch flex-col gap-1 flex-1"
+                class="flex flex-1 flex-col items-stretch gap-1"
                 id="login-form-1"
             >
                 <label
@@ -188,7 +197,7 @@
                 <div id="login-captcha" class="my-1"></div>
                 <label
                     for="login-tos"
-                    class="flex items-center gap-2 text-gray-700 dark:text-gray-300 mb-1 ml-1"
+                    class="mb-1 ml-1 flex items-center gap-2 text-gray-700 dark:text-gray-300"
                 >
                     <input
                         type="checkbox"
@@ -199,7 +208,7 @@
                     I agree to the
                     <a href="legal" class="text-blue-500">Terms of Service</a>
                 </label>
-                <div class="flex gap-1 justify-stretch">
+                <div class="flex justify-stretch gap-1">
                     <button class="btn flex-1" type="submit" value="login">
                         Login
                     </button>
@@ -210,11 +219,11 @@
             </form>
             <div
                 id="login-loading"
-                class="flex items-center justify-center mt-4 text-gray-500 dark:text-gray-400"
+                class="mt-4 flex items-center justify-center text-gray-500 dark:text-gray-400"
                 hidden
             >
                 <svg
-                    class="animate-spin h-5 w-5"
+                    class="h-5 w-5 animate-spin"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -232,7 +241,7 @@
             </div>
             <div
                 id="login-complete"
-                class="flex items-center flex-col gap-1 flex-1"
+                class="flex flex-1 flex-col items-center gap-1"
                 hidden
             >
                 <svg
@@ -240,7 +249,7 @@
                     xmlns="http://www.w3.org/2000/svg"
                     id="login-complete-svg"
                     alt="Checkmark"
-                    class="w-32 h-32 mx-auto mb-4"
+                    class="mx-auto mb-4 h-32 w-32"
                 >
                     <g
                         fill="none"
@@ -255,7 +264,7 @@
                         <path d="m165.38 283.06 71.252 68.199 109.99-190.51" />
                     </g>
                 </svg>
-                <h2 class="text-2xl font-bold mb-4">Login Successful</h2>
+                <h2 class="mb-4 text-2xl font-bold">Login Successful</h2>
                 <p
                     class="text-gray-700 dark:text-gray-300"
                     id="login-complete-message"
@@ -282,15 +291,15 @@
         </div>
         <div
             id="dialog-bg"
-            class="fixed inset-0 bg-neutral-800/50 z-40 hidden backdrop-blur-xs"
+            class="fixed inset-0 z-40 hidden bg-neutral-800/50 backdrop-blur-xs"
         ></div>
         <div
             id="loading-overlay"
-            class="fixed inset-0 bg-gray-300/90 dark:bg-gray-900/90 z-100 flex flex-col gap-2 items-center justify-center text-neutral-800 dark:text-white backdrop-blur-sm font-semibold"
+            class="fixed inset-0 z-100 flex flex-col items-center justify-center gap-2 bg-gray-300/90 font-semibold text-neutral-800 backdrop-blur-sm dark:bg-gray-900/90 dark:text-white"
         >
             <div class="flex items-center gap-2">
                 <svg
-                    class="animate-spin h-5 w-5"
+                    class="h-5 w-5 animate-spin"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -308,12 +317,33 @@
             </div>
             <div
                 id="loading-message"
-                class="text-gray-700 dark:text-gray-400 font-normal"
+                class="font-normal text-gray-700 dark:text-gray-400"
             ></div>
             <noscript class="text-red-500">
                 JavaScript is required for this application to function
                 properly. Please enable JavaScript in your browser settings.
             </noscript>
+        </div>
+        <div
+            id="cookie-consent"
+            class="fixed bottom-2 left-2 z-50 flex flex-col gap-2 rounded-lg bg-white p-4 text-black shadow-lg dark:bg-gray-800 dark:text-white"
+        >
+            <strong class="text-lg font-semibold"> Cookie Consent </strong>
+            <p>
+                This site uses cookies to enhance your experience. By clicking
+                "Accept", you consent to the use of cookies.
+            </p>
+            <p>
+                For more information on how we use cookies and your privacy,
+                please read our
+                <a href="legal#privacy" class="text-blue-500 hover:underline"
+                    >Privacy Policy</a
+                >.
+            </p>
+            <div class="flex justify-end gap-2">
+                <button id="accept-cookies" class="btn flex-1 font-extrabold">Accept</button>
+                <button id="decline-cookies" class="btn danger">Decline</button>
+            </div>
         </div>
     </body>
 </html>

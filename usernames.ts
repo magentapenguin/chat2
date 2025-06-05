@@ -1,6 +1,6 @@
 import { checkLogin, checkLoginUser } from "./login";
 import { usernameColor } from "./main";
-import { supabase } from "./supabase-client";
+import { supabase, Types } from "./supabase-client";
 import { requireFinished, showToast } from "./utils";
 
 const usernameDialog = document.getElementById(
@@ -24,9 +24,13 @@ usernameInput.addEventListener("input", () => {
 });
 
 export let probablyHasUsername = false;
+export let probableUsername: string | null = null;
 // Check if the user has a username when the page loads
 document.addEventListener("DOMContentLoaded", async () => {
     probablyHasUsername = await doIHaveUsername();
+    if (probablyHasUsername) {
+        probableUsername = (await checkLoginUser())?.user_metadata?.username || null;
+    }
 });
 
 // Add event listener for the close button
@@ -105,6 +109,7 @@ usernameForm.addEventListener("submit", async (event) => {
     usernameForm.reset();
     usernameDialog.hidden = true;
     probablyHasUsername = true; // Update the flag
+    probableUsername = username; // Update the probable username
 });
 
 export async function doIHaveUsername(): Promise<boolean> {
@@ -117,7 +122,7 @@ export async function doIHaveUsername(): Promise<boolean> {
     const user = data.session?.user;
     if (user) {
         // Check if the user has a username
-        const { data: username, error: usernameError } = await supabase
+        const { data: usernameData, error: usernameError } = await supabase
             .from("usernames")
             .select("username")
             .eq("user_id", user.id)
@@ -126,9 +131,12 @@ export async function doIHaveUsername(): Promise<boolean> {
             console.error("Error checking username:", usernameError);
             return false;
         }
-        if (username) {
+        if (usernameData) {
+            let username = usernameData as Types.Tables<"usernames">;
+            userCache[user.id] = username.username; // Cache the username
             // User has a username
             probablyHasUsername = true;
+            probableUsername = username.username;
             return true;
         }
     }
@@ -141,4 +149,25 @@ requireFinished(async () => {
         // If the user does not have a username, show the dialog
         beginUsernameFlow();
     }
-}, "Check Username Flow");
+}, "Check Username Flow");let userCache: { [key: string]: string; } = {};
+export async function getUsername(userId: string) {
+    if (userCache[userId]) {
+        return userCache[userId];
+    }
+    const { data, error } = await supabase
+        .from("usernames")
+        .select("username")
+        .eq("user_id", userId)
+        .single();
+    if (error) {
+        console.warn("Error fetching username:", error);
+        userCache[userId] = userId;
+        return userId;
+    }
+    if (data) {
+        userCache[userId] = data.username;
+        return data.username;
+    }
+    return userId;
+}
+

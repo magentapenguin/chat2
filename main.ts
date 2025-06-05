@@ -12,6 +12,7 @@ import {
     shuffle,
 } from "./utils";
 import { supabase, Types as dbTypes } from "./supabase-client";
+import { getUsername } from "./usernames";
 
 export const nanoid = customAlphabet("1234567890abcdef", 30);
 
@@ -48,7 +49,6 @@ onAllFinished(() => {
     overlay.hidden = true;
     clearInterval(interval);
 });
-
 
 declare const hcaptcha: any;
 
@@ -203,7 +203,7 @@ once(async () => {
                                 ".user"
                             ) as HTMLSpanElement | null;
                             if (userElement) {
-                                userElement.textContent = await getUserName(
+                                userElement.textContent = await getUsername(
                                     updatedMessage.user_id
                                 );
                                 userElement.style.color = usernameColor(
@@ -296,29 +296,6 @@ export function usernameColor(username: string, seed = 2): string {
     return `hsl(${hue}, 50%, 50%)`;
 }
 
-let userCache: { [key: string]: string } = {};
-
-async function getUserName(userId: string) {
-    if (userCache[userId]) {
-        return userCache[userId];
-    }
-    const { data, error } = await supabase
-        .from("usernames")
-        .select("username")
-        .eq("user_id", userId)
-        .single();
-    if (error) {
-        console.warn("Error fetching username:", error);
-        userCache[userId] = userId;
-        return userId;
-    }
-    if (data) {
-        userCache[userId] = data.username;
-        return data.username;
-    }
-    return userId;
-}
-
 async function addMessage(message) {
     const messageElement = document.createElement("div");
     messageElement.className = "message";
@@ -326,7 +303,7 @@ async function addMessage(message) {
 
     const userElement = document.createElement("strong");
     userElement.className = "user";
-    userElement.textContent = await getUserName(message.user_id);
+    userElement.textContent = await getUsername(message.user_id);
     userElement.style.color = usernameColor(userElement.textContent!);
     messageElement.appendChild(userElement);
     const timestampElement = document.createElement("time");

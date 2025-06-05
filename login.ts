@@ -2,7 +2,8 @@ import { supabase } from "./supabase-client";
 import { gsap } from "gsap";
 import { once, showToast, requireFinished } from "./utils";
 import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
-import { beginUsernameFlow, doIHaveUsername, probablyHasUsername } from "./usernames";
+import { beginUsernameFlow, doIHaveUsername, getUsername, probablyHasUsername } from "./usernames";
+import { posthog } from "./posthog";
 
 gsap.registerPlugin(DrawSVGPlugin);
 
@@ -131,9 +132,20 @@ requireFinished(async () => {
     document.body.classList.toggle("logged-in", loggedIn);
 }, "Login flow initialized");
 
-onAuthChange((loggedIn) => {
+onAuthChange(async (loggedIn) => {
     navNoUser.hidden = loggedIn;
     navUser.hidden = !loggedIn;
+    if (loggedIn) {
+        const user = await checkLoginUser(true);
+        if (user) {
+            posthog.identify(user.id, {
+                email: user.email,
+                username: await getUsername(user.id),
+            });
+        }
+    } else {
+        posthog.reset();
+    }
 });
 
 loginButton.addEventListener("click", () => {
