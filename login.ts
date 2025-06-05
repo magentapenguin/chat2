@@ -94,6 +94,13 @@ const backButton = document.getElementById(
 ) as HTMLButtonElement;
 const loginDialog = new Dialog(loginDialogElem);
 
+const navNoUser = document.getElementById(
+    "nav-nouser"
+) as HTMLDivElement;
+const navUser = document.getElementById(
+    "nav-user"
+) as HTMLDivElement;
+
 const logout = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
@@ -122,13 +129,12 @@ logoutButton.addEventListener("click", async () => {
 
 requireFinished(async () => {
     const loggedIn = await checkLogin();
-    logoutButton.hidden = !loggedIn;
-    loginButton.hidden = loggedIn;
+    document.body.classList.toggle("logged-in", loggedIn);
 }, "Login flow initialized");
 
 onAuthChange((loggedIn) => {
-    logoutButton.hidden = !loggedIn;
-    loginButton.hidden = loggedIn;
+    navNoUser.hidden = loggedIn;
+    navUser.hidden = !loggedIn;
 });
 
 loginButton.addEventListener("click", () => {

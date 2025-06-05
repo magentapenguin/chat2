@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html
+    lang="en"
+    class="h-full bg-white dark:bg-gray-950 text-black dark:text-white"
+>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <meta property="og:title" content="Chat Application" />
+        <meta property="og:description" content="A simple chat application using Supabase." />
+
+        <title>Chat Legal</title>
+        <link rel="stylesheet" href="style.tailwind.css" />
+        <link rel="icon" href="icon.svg" type="image/svg+xml" />
+    </head>
+    <body class="h-full">
+        <div class="container mx-auto p-4 h-full flex flex-col">
+            <header class="flex justify-between items-center mb-4">
+                <h1 class="text-xl font-bold">Legal Information</h1>
+                <a href=".." class="text-blue-500 hover:underline">
+                    Back to Chat
+                </a>
+            </header>
+            <main class="flex-grow p-4">
+                <section id="terms" class="mb-8">
+                    <h2 class="text-lg font-semibold mb-2">Terms of Service</h2>
+                    <div class="ms-2 ps-2 border-l-2 border-gray-500/20">
+                        By using this chat application, you agree to the following terms:
+                        <ul class="list-disc pl-5">
+                            <li>You must be at least 13 years old to use this service.</li>
+                            <li>Do not share personal information.</li>
+                            <li>Respect other users and do not engage in harassment.</li>
+                            <li>We reserve the right to terminate accounts for violations of these terms.</li>
+                        </ul>
+                    </div>
+                </section>
+                <section id="privacy" class="mb-8">
+                    <h2 class="text-lg font-semibold mb-2">Privacy Policy</h2>
+                    <div class="ms-2 ps-2 border-l-2 border-gray-500/20">
+                        We value your privacy. Here’s how we handle your data:
+                        <ul class="list-disc pl-5">
+                            <li>We collect minimal personal information necessary for account creation.</li>
+                            <li>Messages are stored securely and are not shared with third parties.</li>
+                            <li>You can delete your account at any time, which will remove your data from our servers.</li>
+                            <li>We use <a href="https://supabase.com" class="text-blue-500 hover:underline">Supabase</a> to manage user data and authentication.</li>
+                            <li>We use <a href="https://posthog.com" class="text-blue-500 hover:underline">PostHog</a> for analytics to improve our service.</li>
+                            <li><a href="https://posthog.com/legal/privacy-policy" class="text-blue-500 hover:underline">PostHog Privacy Policy</a></li>
+                            <li>We use <a href="https://hcaptcha.com" class="text-blue-500 hover:underline">hCaptcha</a> to protect against spam and abuse.</li>
+                            <li><a href="https://www.hcaptcha.com/privacy" class="text-blue-500 hover:underline">hCaptcha Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </body>
+</html>
