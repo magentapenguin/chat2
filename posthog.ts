@@ -10,31 +10,71 @@ posthog.init("phc_FeriuDBIyqt9KKKHXDBSebZhzan9IPZzHjuN6JwrVzZ", {
     opt_out_capturing_by_default: true,
 });
 
-const cookieBanner = document.getElementById("cookie-consent") as HTMLElement;
-const acceptButton = document.getElementById(
-    "accept-cookies",
-) as HTMLButtonElement;
-const rejectButton = document.getElementById(
-    "decline-cookies",
-) as HTMLButtonElement;
-
-const isOptedIn = localStorage.getItem("posthog-opt-in");
-if (isOptedIn === "true") {
-    posthog.opt_in_capturing();
-    cookieBanner.remove();
-} else if (isOptedIn === "false") {
-    cookieBanner.remove(); // remove the banner so the animation can't play
-} else {
-    cookieBanner.hidden = false;
-}
-acceptButton.addEventListener("click", () => {
-    posthog.opt_in_capturing();
-    localStorage.setItem("posthog-opt-in", "true");
-    cookieBanner.hidden = true;
-});
-rejectButton.addEventListener("click", () => {
-    posthog.opt_out_capturing();
-    localStorage.setItem("posthog-opt-in", "false");
-    cookieBanner.hidden = true;
-});
 export { posthog };
+
+export class CookieConsent extends HTMLElement {
+    constructor() {
+        super();
+        this.innerHTML = `
+            <div
+                class="sticky bottom-2 left-0 z-50 not-xs:right-0 xs:max-w-60 flex flex-col gap-2 rounded-lg bg-white p-4 text-black shadow-lg dark:bg-gray-800 dark:text-white cookie-consent m-2 sm:text-sm"
+            >
+                <strong class="text-lg font-semibold"> Cookie Consent </strong>
+                <div>
+                    <p>
+                        This site uses cookies to enhance your experience. By clicking
+                        "Accept", you consent to the use of cookies.
+                    </p>
+                    <p>
+                        For more information on how we use cookies and your privacy,
+                        please read our
+                        <a href="legal#privacy" class="text-blue-500 hover:underline"
+                            >Privacy Policy</a>.
+                    </p>
+                </div>
+                <div class="flex justify-end gap-2">
+                    <button class="btn flex-1 font-extrabold accept-cookies">Accept</button>
+                    <button class="btn danger decline-cookies">Decline</button>
+                </div>
+            </div>
+        `;
+
+        const cookieConsent = this.querySelector(
+            ".cookie-consent",
+        ) as HTMLDivElement;
+        const acceptButton = this.querySelector(
+            ".accept-cookies",
+        ) as HTMLButtonElement;
+        const rejectButton = this.querySelector(
+            ".decline-cookies",
+        ) as HTMLButtonElement;
+
+        const isOptedIn = localStorage.getItem("posthog-opt-in");
+        if (navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || (navigator as any).globalPrivacyControl) { 
+            // If DNT is enabled, we assume the user does not want tracking
+            localStorage.setItem("posthog-opt-in", "false");
+            posthog.opt_out_capturing();
+            cookieConsent.hidden = true;
+        }
+        if (isOptedIn) {
+            cookieConsent.hidden = true;
+        }
+        if (isOptedIn === "true") {
+            posthog.opt_in_capturing();
+        } else if (isOptedIn === "false") {
+            posthog.opt_out_capturing();
+        }
+        acceptButton.addEventListener("click", () => {
+            localStorage.setItem("posthog-opt-in", "true");
+            posthog.opt_in_capturing();
+            cookieConsent.hidden = true;
+        });
+        rejectButton.addEventListener("click", () => {
+            localStorage.setItem("posthog-opt-in", "false");
+            posthog.opt_out_capturing();
+            cookieConsent.hidden = true;
+        });
+    }
+}
+
+customElements.define("cookie-consent", CookieConsent);

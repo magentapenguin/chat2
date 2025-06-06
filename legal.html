@@ -13,6 +13,7 @@
         <title>Chat Legal</title>
         <link rel="stylesheet" href="style.tailwind.css" />
         <link rel="icon" href="icon.svg" type="image/svg+xml" />
+        <script src="posthog.ts" type="module"></script>
     </head>
     <body class="h-full">
         <div class="container mx-auto p-4 h-full flex flex-col">
@@ -24,7 +25,9 @@
             </header>
             <main class="flex-grow p-4">
                 <section id="terms" class="mb-8">
-                    <h2 class="text-lg font-semibold mb-2">Terms of Service</h2>
+                    <h2 class="text-lg font-semibold mb-2">Terms of Service
+                        <a href="legal#terms" class="text-blue-500/20 hover:text-blue-500/80">#</a>
+                    </h2>
                     <div class="ms-2 ps-2 border-l-2 border-gray-500/20">
                         By using this chat application, you agree to the following terms:
                         <ul class="list-disc pl-5">
@@ -36,7 +39,9 @@
                     </div>
                 </section>
                 <section id="privacy" class="mb-8">
-                    <h2 class="text-lg font-semibold mb-2">Privacy Policy</h2>
+                    <h2 class="text-lg font-semibold mb-2">Privacy Policy
+                        <a href="legal#privacy" class="text-blue-500/20 hover:text-blue-500/80">#</a>
+                    </h2>
                     <div class="ms-2 ps-2 border-l-2 border-gray-500/20">
                         We value your privacy. Here’s how we handle your data:
                         <ul class="list-disc pl-5">
@@ -45,7 +50,7 @@
                             <li>You can delete your account at any time, which will remove your data from our servers.</li>
                             <li>We use <a href="https://supabase.com" class="text-blue-500 hover:underline">Supabase</a> to manage user data and authentication.</li>
                             <li>We use <a href="https://posthog.com" class="text-blue-500 hover:underline">PostHog</a> for analytics to improve our service.</li>
-                            <li><a href="https://posthog.com/legal/privacy-policy" class="text-blue-500 hover:underline">PostHog Privacy Policy</a></li>
+                            <li><a href="https://posthog.com/privacy#full-privacy-policy" class="text-blue-500 hover:underline">PostHog Privacy Policy</a></li>
                             <li>We use <a href="https://hcaptcha.com" class="text-blue-500 hover:underline">hCaptcha</a> to protect against spam and abuse.</li>
                             <li><a href="https://www.hcaptcha.com/privacy" class="text-blue-500 hover:underline">hCaptcha Privacy Policy</a></li>
                         </ul>
@@ -53,5 +58,6 @@
                 </section>
             </main>
         </div>
+        <cookie-consent></cookie-consent>
     </body>
 </html>
