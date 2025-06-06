@@ -1,7 +1,7 @@
-import { checkLogin, checkLoginUser } from "./login";
-import { usernameColor } from "./main";
-import { supabase, Types } from "./supabase-client";
-import { requireFinished, showToast, Dialog } from "./utils";
+import { checkLogin, checkLoginUser } from "./login.ts";
+import { usernameColor } from "./main.ts";
+import { supabase, Types } from "./supabase-client.ts";
+import { requireFinished, showToast, Dialog } from "./utils.ts";
 
 const usernameDialogElem = document.getElementById(
     "you-need-a-username"

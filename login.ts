@@ -1,15 +1,18 @@
 import { supabase } from "./supabase-client";
 import { gsap } from "gsap";
-import { once, showToast, requireFinished, Dialog } from "./utils";
+import { once, showToast, requireFinished, Dialog } from "./utils.ts";
 import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
-import { beginUsernameFlow, doIHaveUsername, getUsername, probablyHasUsername } from "./usernames";
-import { posthog } from "./posthog";
+import { beginUsernameFlow, doIHaveUsername, getUsername, probablyHasUsername } from "./usernames.ts";
+import { posthog } from "./posthog.ts";
+
+/// <reference types="@hcaptcha/types" />
+
 
 gsap.registerPlugin(DrawSVGPlugin);
 
 async function login(email: string, password: string, signUp = false) {
-    const captcha = (window as any).hcaptcha.getResponse(); // @ts-ignore
-
+    const captcha = hcaptcha.getResponse();
+    console.log("Captcha response:", captcha);
     if (captcha) {
         if (signUp) {
             const { data, error } = await supabase.auth.signUp({
@@ -120,7 +123,7 @@ backButton.addEventListener("click", () => {
     loginError.hidden = true;
     loginLoading.hidden = true;
     loginComplete.hidden = true;
-    (window as any).hcaptcha.reset(); // @ts-ignore
+    hcaptcha.reset(); // @ts-ignore
     loginStep1Form.reset();
 });
 
@@ -176,6 +179,7 @@ const loginCompleteMessageNeedUsername = document.getElementById(
 
 loginCompleteContinueButton.addEventListener("click", async () => {
     reset();
+    loginDialog.hide();
     if (!(await doIHaveUsername())) {
         beginUsernameFlow(); // Start the username flow after login completion
     }
@@ -186,7 +190,7 @@ function reset() {
     loginError.hidden = true;
     loginLoading.hidden = true;
     loginComplete.hidden = true;
-    (window as any).hcaptcha.reset(); // @ts-ignore
+    hcaptcha.reset();
     loginStep1Form.reset();
 }
 
@@ -225,7 +229,7 @@ once(() => {
             loginError.innerText = "Error: " + error.message;
         } finally {
             loginLoading.hidden = true;
-            (window as any).hcaptcha.reset(); // @ts-ignore
+            hcaptcha.reset(); 
         }
     });
 }, "login-flow-loaded");

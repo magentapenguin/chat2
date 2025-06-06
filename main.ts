@@ -1,6 +1,6 @@
 import { hCaptchaLoader } from "@hcaptcha/loader";
 import { customAlphabet } from "nanoid";
-import { checkLoginUser, checkLogin, onAuthChange } from "./login";
+import { checkLoginUser, checkLogin, onAuthChange } from "./login.ts";
 import {
     cyrb53,
     humanize,
@@ -11,8 +11,10 @@ import {
     showToast,
     shuffle,
 } from "./utils";
-import { supabase, Types as dbTypes } from "./supabase-client";
-import { getUsername } from "./usernames";
+import { supabase, Types as dbTypes } from "./supabase-client.ts";
+import { getUsername } from "./usernames.ts";
+import { posthog } from "./posthog.ts";
+/// <reference types="@hcaptcha/types" />
 
 export const nanoid = customAlphabet("1234567890abcdef", 30);
 
@@ -26,7 +28,7 @@ const loadingMessages = shuffle([
 ]);
 
 const loadingMessageElement = document.getElementById(
-    "loading-message"
+    "loading-message",
 ) as HTMLDivElement;
 
 let loadingIndex = 0;
@@ -44,13 +46,11 @@ updateLoadingMessage();
 
 onAllFinished(() => {
     const overlay = document.getElementById(
-        "loading-overlay"
+        "loading-overlay",
     ) as HTMLDivElement;
     overlay.hidden = true;
     clearInterval(interval);
 });
-
-declare const hcaptcha: any;
 
 once(() => {
     requireFinished(async () => {
@@ -59,6 +59,22 @@ once(() => {
         hcaptcha.render("login-captcha", {
             sitekey: "77327f6a-6a8a-46a6-a810-34245caa044c",
             theme: isDarkMode() ? "dark" : "light",
+            callback: (response) => {
+                posthog.capture("captcha_success", {
+                    response,
+                });
+            },
+            "error-callback": (error) => {
+                posthog.capture("captcha_error", {
+                    error,
+                });
+            },
+            "expired-callback": () => {
+                posthog.capture("captcha_expired");
+            },
+            "chalexpired-callback": () => {
+                posthog.capture("captcha_challenge_expired");
+            },
         });
     }, "Load hCaptcha");
 }, "hcaptcha-init");
@@ -76,7 +92,7 @@ const channel = supabase.realtime.channel("messages", {
 const chat = document.getElementById("chat") as HTMLDivElement;
 const chatForm = document.getElementById("chat-form") as HTMLFormElement;
 const notifSound = document.getElementById(
-    "notification-sound"
+    "notification-sound",
 ) as HTMLAudioElement;
 
 once(async () => {
@@ -136,7 +152,7 @@ once(async () => {
         if (data) {
             chatForm.reset();
             const message = row2Msg(
-                data[0] as dbTypes.Database["public"]["Tables"]["messages"]["Row"]
+                data[0] as dbTypes.Database["public"]["Tables"]["messages"]["Row"],
             );
             addMessage(message);
         }
@@ -160,12 +176,12 @@ once(async () => {
                         notifSound.play().catch((error) => {
                             console.error(
                                 "Error playing notification sound:",
-                                error
+                                error,
                             );
                         });
                         try {
                             const message = row2Msg(
-                                payload.new as dbTypes.Database["public"]["Tables"]["messages"]["Row"]
+                                payload.new as dbTypes.Database["public"]["Tables"]["messages"]["Row"],
                             );
                             addMessage(message);
                         } catch (error) {
@@ -185,12 +201,12 @@ once(async () => {
                         // find the message in the chat and update it
                         console.log("Update event received:", payload);
                         const updatedMessage = row2Msg(
-                            payload.new as dbTypes.Database["public"]["Tables"]["messages"]["Row"]
+                            payload.new as dbTypes.Database["public"]["Tables"]["messages"]["Row"],
                         );
                         const messageElement = chat.querySelector(
                             'div.message[data-message-id="' +
                                 updatedMessage.id +
-                                '"]'
+                                '"]',
                         ) as HTMLDivElement | null;
                         if (messageElement) {
                             const contentElement =
@@ -200,14 +216,14 @@ once(async () => {
                                     updatedMessage.content;
                             }
                             const userElement = messageElement.querySelector(
-                                ".user"
+                                ".user",
                             ) as HTMLSpanElement | null;
                             if (userElement) {
                                 userElement.textContent = await getUsername(
-                                    updatedMessage.user_id
+                                    updatedMessage.user_id,
                                 );
                                 userElement.style.color = usernameColor(
-                                    userElement.textContent!
+                                    userElement.textContent!,
                                 );
                             }
                             const timestampElement =
@@ -215,16 +231,16 @@ once(async () => {
                             if (timestampElement) {
                                 timestampElement.setAttribute(
                                     "datetime",
-                                    updatedMessage.timestamp
+                                    updatedMessage.timestamp,
                                 );
                                 timestampElement.innerHTML = humanize(
-                                    updatedMessage.timestamp
+                                    updatedMessage.timestamp,
                                 );
                             }
                         } else {
                             console.warn(
                                 "Message to update not found in chat:",
-                                updatedMessage.id
+                                updatedMessage.id,
                             );
                         }
 
@@ -236,14 +252,14 @@ once(async () => {
                         const deletedMessageElement = chat.querySelector(
                             'div.message[data-message-id="' +
                                 deletedMessageId +
-                                '"]'
+                                '"]',
                         ) as HTMLDivElement | null;
                         if (deletedMessageElement) {
                             deletedMessageElement.remove();
                         } else {
                             console.warn(
                                 "Message to delete not found in chat:",
-                                deletedMessageId
+                                deletedMessageId,
                             );
                         }
                         break;
@@ -251,7 +267,7 @@ once(async () => {
                         // This should not happen, but just in case
                         console.error(
                             "Unknown event type:",
-                            (payload as { eventType: string }).eventType
+                            (payload as { eventType: string }).eventType,
                         );
                         showToast({
                             title: "Error",
@@ -262,7 +278,7 @@ once(async () => {
                         });
                         break;
                 }
-            }
+            },
         )
         .subscribe();
 
@@ -409,7 +425,7 @@ async function addMessage(message) {
 
 requireFinished(async () => {
     const chatFieldset = chatForm.querySelector(
-        "fieldset"
+        "fieldset",
     ) as HTMLFieldSetElement;
 
     onAuthChange((loggedIn) => {
