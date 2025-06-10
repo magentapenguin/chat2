@@ -1,15 +1,26 @@
+declare global {
+  interface ImportMeta {
+    env: {
+      DEV: boolean;
+      // other environment variables can be added here
+    };
+  }
+}
+
 import posthog from "posthog-js";
-
-posthog.init("phc_FeriuDBIyqt9KKKHXDBSebZhzan9IPZzHjuN6JwrVzZ", {
-    api_host: "https://us.i.posthog.com",
-    defaults: "2025-05-24",
-    session_recording: {
-        recordBody: true,
-        collectFonts: true,
-    },
-    opt_out_capturing_by_default: true,
-});
-
+import { once } from './utils.ts'
+once(() => {
+    posthog.init("phc_FeriuDBIyqt9KKKHXDBSebZhzan9IPZzHjuN6JwrVzZ", {
+        api_host: "https://us.i.posthog.com",
+        defaults: "2025-05-24",
+        session_recording: {
+            recordBody: true,
+            collectFonts: true,
+        },
+        opt_out_capturing_by_default: true,
+        opt_out_persistence_by_default: true,
+    });
+}, "posthog-init");
 export { posthog };
 
 export class CookieConsent extends HTMLElement {
@@ -50,7 +61,7 @@ export class CookieConsent extends HTMLElement {
         ) as HTMLButtonElement;
 
         const isOptedIn = localStorage.getItem("posthog-opt-in");
-        if (navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || (navigator as any).globalPrivacyControl) { 
+        if ((navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || (navigator as any).globalPrivacyControl) && isOptedIn !== "true") { 
             // If DNT is enabled, we assume the user does not want tracking
             localStorage.setItem("posthog-opt-in", "false");
             posthog.opt_out_capturing();
@@ -73,6 +84,13 @@ export class CookieConsent extends HTMLElement {
             localStorage.setItem("posthog-opt-in", "false");
             posthog.opt_out_capturing();
             cookieConsent.hidden = true;
+        });
+        cookieConsent.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") {
+                cookieConsent.hidden = true;
+                localStorage.setItem("posthog-opt-in", "false");
+                posthog.opt_out_capturing();
+            }
         });
     }
 }

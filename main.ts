@@ -59,21 +59,15 @@ once(() => {
         hcaptcha.render("login-captcha", {
             sitekey: "77327f6a-6a8a-46a6-a810-34245caa044c",
             theme: isDarkMode() ? "dark" : "light",
-            callback: (response) => {
-                posthog.capture("captcha_success", {
-                    response,
-                });
+            callback: () => {
+                console.log("Captcha solved");
+                posthog.capture("captcha_solve");
             },
             "error-callback": (error) => {
+                console.error("Captcha error:", error);
                 posthog.capture("captcha_error", {
                     error,
                 });
-            },
-            "expired-callback": () => {
-                posthog.capture("captcha_expired");
-            },
-            "chalexpired-callback": () => {
-                posthog.capture("captcha_challenge_expired");
             },
         });
     }, "Load hCaptcha");
