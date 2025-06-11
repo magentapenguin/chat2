@@ -15,6 +15,9 @@ import { supabase, Types as dbTypes } from "./supabase-client.ts";
 import { getUsername } from "./usernames.ts";
 import { posthog } from "./posthog.ts";
 /// <reference types="@hcaptcha/types" />
+/// <reference types="./types.ts" />
+
+
 
 export const nanoid = customAlphabet("1234567890abcdef", 30);
 
@@ -426,3 +429,9 @@ requireFinished(async () => {
         chatFieldset.disabled = !loggedIn;
     });
 }, "Chat init");
+
+// Build Info
+const buildInfo = document.getElementById("build-info") as HTMLDivElement;
+if (import.meta.env.PROD) {
+    buildInfo.textContent = `Build: ${import.meta.env.VITE_BUILD_SHA} (${import.meta.env.VITE_BUILD_DATE})`;
+}
