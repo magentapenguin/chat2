@@ -431,6 +431,6 @@ requireFinished(async () => {
 // Build Info
 const buildInfo = document.getElementById("build-info") as HTMLDivElement;
 if (import.meta.env.PROD) {
-    buildInfo.innerHTML = `Build: <span class="truncate w-20">${import.meta.env.VITE_BUILD_SHA}</span>
-    (<time datetime="${import.meta.env.VITE_BUILD_DATE}">${humanize(import.meta.env.VITE_BUILD_DATE)})</time>)`;
+    buildInfo.innerHTML = `Build: <span class="truncate w-5">${import.meta.env.VITE_BUILD_SHA}</span>
+    (<time datetime="${import.meta.env.VITE_BUILD_DATE}">${humanize(import.meta.env.VITE_BUILD_DATE)}</time>)`;
 }
