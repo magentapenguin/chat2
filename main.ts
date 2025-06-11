@@ -17,8 +17,6 @@ import { posthog } from "./posthog.ts";
 /// <reference types="@hcaptcha/types" />
 /// <reference types="./types.ts" />
 
-
-
 export const nanoid = customAlphabet("1234567890abcdef", 30);
 
 const loadingMessages = shuffle([
@@ -433,5 +431,6 @@ requireFinished(async () => {
 // Build Info
 const buildInfo = document.getElementById("build-info") as HTMLDivElement;
 if (import.meta.env.PROD) {
-    buildInfo.textContent = `Build: ${import.meta.env.VITE_BUILD_SHA} (${import.meta.env.VITE_BUILD_DATE})`;
+    buildInfo.innerHTML = `Build: <span class="truncate w-20">${import.meta.env.VITE_BUILD_SHA}</span>
+    (<time datetime="${import.meta.env.VITE_BUILD_DATE}">${humanize(import.meta.env.VITE_BUILD_DATE)})</time>)`;
 }
