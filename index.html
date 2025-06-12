@@ -23,17 +23,19 @@
         />
     </head>
     <body class="h-full">
-        <cookie-consent></cookie-consent>
         <main class="container mx-auto flex h-full flex-col p-4">
             <header class="mb-4 flex items-center justify-between">
                 <h1 class="text-2xl font-bold">Chat Application</h1>
                 <nav class="flex items-center gap-2">
-                    <div id="nav-nouser">
+                    <div 
+                    data-require-auth="no-user">
                         <button id="login-button" class="btn" type="button">
                             Login
                         </button>
                     </div>
-                    <div id="nav-user" hidden>
+                    <div
+                    data-require-auth="user" 
+                    hidden>
                         <button
                             id="logout-button"
                             class="btn danger"
@@ -76,18 +78,52 @@
                 </fieldset>
             </form>
             <div class="flex-1"></div>
-            <footer class="mt-2 flex items-center justify-between text-sm gap-1">
+            <footer class="mt-2 flex items-center text-sm gap-2">
                 <a
                     href="legal"
-                    class="text-neutral-600/80 underline hover:text-neutral-600 dark:text-neutral-400/80 dark:hover:text-neutral-400"
+                    class="text-neutral-600/80 underline hover:text-neutral-600 dark:text-neutral-400/80 dark:hover:text-neutral-400 cursor-pointer"
+                    title="Legal Information"
                 >
                     Legal
                 </a>
+                <button
+                    id="view-experiments"
+                    title="View Experiments"
+                    data-require-auth="user"
+                    class="text-neutral-600/80 underline hover:text-neutral-600 dark:text-neutral-400/80 dark:hover:text-neutral-400 cursor-pointer"
+                >
+                    Experiments
+                </button>
+                <div class="flex-1"></div>
                 <span class="text-neutral-600/80 dark:text-neutral-400/80 text-xs" id="build-info">
                     In Development - Not for Production Use
                 </span>
             </footer>
         </main>
+        <div 
+            id="experiments-dialog"
+            class="dialog mx-auto flex flex-col items-stretch p-4"
+            hidden
+        >
+            <header class="mb-4 flex items-center justify-between">
+                <h1 class="text-2xl font-bold">Experiments</h1>
+                <button
+                    class="close cursor-pointer border-0"
+                    type="button"
+                    title="Close"
+                ></button>
+            </header>
+            <div class="flex flex-col gap-2">
+                <p>
+                    Here you can enable or disable experimental features. These
+                    features are not fully tested and may change or break at any
+                    time.
+                </p>
+                <ul id="experiments-list" class="flex flex-col gap-2">
+                    <!-- Experiment items will be dynamically added here -->
+                </ul>
+            </div>
+        </div>
         <div
             id="you-need-a-username"
             class="dialog mx-auto flex flex-col items-stretch p-4"
@@ -310,6 +346,7 @@
                 JavaScript is required for this application to function
                 properly. Please enable JavaScript in your browser settings.
             </noscript>
+            <cookie-consent></cookie-consent>
         </div>
     </body>
 </html>

@@ -98,12 +98,12 @@ const backButton = document.getElementById(
 ) as HTMLButtonElement;
 const loginDialog = new Dialog(loginDialogElem);
 
-const navNoUser = document.getElementById(
-    "nav-nouser"
-) as HTMLDivElement;
-const navUser = document.getElementById(
-    "nav-user"
-) as HTMLDivElement;
+const requireNoUser = document.querySelectorAll(
+    "[data-require-auth='no-user']"
+) as NodeListOf<HTMLElement>;
+const requireUser = document.querySelectorAll(
+    "[data-require-auth='user']"
+) as NodeListOf<HTMLElement>;
 
 const logout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -137,8 +137,12 @@ requireFinished(async () => {
 }, "Login flow initialized");
 
 onAuthChange(async (loggedIn) => {
-    navNoUser.hidden = loggedIn;
-    navUser.hidden = !loggedIn;
+    requireNoUser.forEach((elem) => {
+        elem.hidden = loggedIn;
+    });
+    requireUser.forEach((elem) => {
+        elem.hidden = !loggedIn;
+    });
     if (loggedIn) {
         const user = await checkLoginUser(true);
         if (user) {

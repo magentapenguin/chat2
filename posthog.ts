@@ -1,5 +1,5 @@
 import posthog from "posthog-js";
-import { once } from './utils.ts';
+import { Dialog, once } from './utils.ts';
 once(() => {
     posthog.init("phc_FeriuDBIyqt9KKKHXDBSebZhzan9IPZzHjuN6JwrVzZ", {
         api_host: "https://us.i.posthog.com",
@@ -85,3 +85,33 @@ export class CookieConsent extends HTMLElement {
 }
 
 customElements.define("cookie-consent", CookieConsent);
+
+const experimentsDialogElem = document.getElementById(
+    "experiments-dialog",
+) as HTMLDivElement;
+const experimentsDialog = new Dialog(
+    experimentsDialogElem
+)
+const experimentsList = document.getElementById(
+    "experiments-list",
+) as HTMLUListElement;
+const experimentsButton = document.getElementById(
+    "view-experiments",
+) as HTMLButtonElement;
+experimentsButton.addEventListener("click", () => {
+    experimentsDialog.show();
+});
+
+posthog.getEarlyAccessFeatures((features) => {
+    console.log("Early access features:", features);
+    features.forEach((feature) => {
+        const listItem = document.createElement("li");
+        listItem.className = "rounded-sm bg-gray-100 p-2 dark:bg-gray-700";
+        listItem.innerHTML = `
+            <strong>${feature.name}</strong> - ${feature.description || "No description available."}
+            <br>
+            <small class="text-gray-500 dark:text-gray-400">Status: ${feature.stage}</small>
+        `;
+        experimentsList.appendChild(listItem);
+    });
+}, undefined, ["alpha", "beta"])
