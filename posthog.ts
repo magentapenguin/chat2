@@ -1,12 +1,3 @@
-declare global {
-  interface ImportMeta {
-    env: {
-      DEV: boolean;
-      // other environment variables can be added here
-    };
-  }
-}
-
 import posthog from "posthog-js";
 import { once } from './utils.ts';
 once(() => {

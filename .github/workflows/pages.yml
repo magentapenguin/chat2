@@ -20,6 +20,10 @@ concurrency:
   group: 'pages'
   cancel-in-progress: true
 
+env:
+  VITE_BUILD_SHA: ${{ github.sha }}
+  VITE_BUILD_DATE: ${{ github.event.head_commit.timestamp }}
+
 jobs:
   # Single deploy job since we're just deploying
   deploy:
