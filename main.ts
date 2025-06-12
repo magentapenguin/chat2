@@ -61,13 +61,13 @@ once(() => {
             theme: isDarkMode() ? "dark" : "light",
             callback: () => {
                 console.log("Captcha solved");
-                posthog.capture("captcha_solve");
+                posthog.capture("captcha_solve", null, {send_instantly: true, transport: "sendBeacon"});
             },
             "error-callback": (error) => {
                 console.error("Captcha error:", error);
                 posthog.capture("captcha_error", {
                     error,
-                });
+                }, {send_instantly: true, transport: "sendBeacon"});
             },
         });
     }, "Load hCaptcha");

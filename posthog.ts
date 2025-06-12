@@ -8,7 +8,7 @@ declare global {
 }
 
 import posthog from "posthog-js";
-import { once } from './utils.ts'
+import { once } from './utils.ts';
 once(() => {
     posthog.init("phc_FeriuDBIyqt9KKKHXDBSebZhzan9IPZzHjuN6JwrVzZ", {
         api_host: "https://us.i.posthog.com",
@@ -17,11 +17,15 @@ once(() => {
             recordBody: true,
             collectFonts: true,
         },
+        debug: import.meta.env.DEV,
         opt_out_capturing_by_default: true,
         opt_out_persistence_by_default: true,
     });
 }, "posthog-init");
-export { posthog };
+export {
+    posthog,
+}
+export default posthog;
 
 export class CookieConsent extends HTMLElement {
     constructor() {
@@ -61,12 +65,6 @@ export class CookieConsent extends HTMLElement {
         ) as HTMLButtonElement;
 
         const isOptedIn = localStorage.getItem("posthog-opt-in");
-        if ((navigator.doNotTrack === "1" || navigator.doNotTrack === "yes" || (navigator as any).globalPrivacyControl) && isOptedIn !== "true") { 
-            // If DNT is enabled, we assume the user does not want tracking
-            localStorage.setItem("posthog-opt-in", "false");
-            posthog.opt_out_capturing();
-            cookieConsent.hidden = true;
-        }
         if (isOptedIn) {
             cookieConsent.hidden = true;
         }
