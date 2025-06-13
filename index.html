@@ -122,6 +122,32 @@
                 <ul id="experiments-list" class="flex flex-col gap-2">
                     <!-- Experiment items will be dynamically added here -->
                 </ul>
+                <div class="flex-auto"></div>
+                <div class="text-gray-500 dark:text-gray-400">
+                    <strong>Note:</strong> Enabling or disabling experiments may
+                    require a page reload to take effect.
+                </div>
+                <fieldset class="flex flex-row gap-2" id="experiments-actions" disabled>
+                    <button
+                        id="experiments-save"
+                        class="btn flex-auto"
+                        type="button"
+                    >
+                        Save Changes
+                    </button>
+                    <div
+                        id="experiments-cancel"
+                        class="btn danger"
+                        type="button"
+                    >
+                        Cancel
+                    </div>
+                </fieldset>
+                <div
+                    id="experiments-error-message"
+                    class="text-red-500"
+                    hidden
+                ></div>
             </div>
         </div>
         <div
@@ -346,7 +372,7 @@
                 JavaScript is required for this application to function
                 properly. Please enable JavaScript in your browser settings.
             </noscript>
-            <cookie-consent></cookie-consent>
         </div>
+        <cookie-consent></cookie-consent>
     </body>
 </html>

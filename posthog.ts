@@ -102,16 +102,58 @@ experimentsButton.addEventListener("click", () => {
     experimentsDialog.show();
 });
 
+    
+
+let experimentsModified = false;
+let changes: Record<string, boolean> = {};
+
+const cancelButton = document.getElementById(
+    "cancel-experiments",
+) as HTMLButtonElement;
+cancelButton.addEventListener("click", () => {
+    if (experimentsModified) {
+        const confirmDiscard = confirm("You have unsaved changes. Are you sure you want to discard them?");
+        if (!confirmDiscard) return;
+    }
+    changes = {};
+    experimentsModified = false;
+    experimentsDialog.hide();
+});
+const saveButton = document.getElementById(
+    "save-experiments",
+) as HTMLButtonElement;
+saveButton.addEventListener("click", () => {
+    if (!experimentsModified) {
+        alert("No changes to save.");
+        return;
+    }
+experimentsList.addEventListener("change", (event) => {
+    const target = event.target as HTMLInputElement;
+    if (target.tagName.toLowerCase() === "input" && target.type === "checkbox") {
+        const featureFlagKey = target.id.replace("exp-", "");
+        experimentsModified = true;
+        changes[featureFlagKey] = target.checked;
+    }
+});
+
+
 posthog.getEarlyAccessFeatures((features) => {
     console.log("Early access features:", features);
     features.forEach((feature) => {
         const listItem = document.createElement("li");
-        listItem.className = "rounded-sm bg-gray-100 p-2 dark:bg-gray-700";
+        const enabled = posthog.isFeatureEnabled(feature.flagKey);
+        listItem.className = "contents";
         listItem.innerHTML = `
-            <strong>${feature.name}</strong> - ${feature.description || "No description available."}
-            <br>
-            <small class="text-gray-500 dark:text-gray-400">Status: ${feature.stage}</small>
+            <label for="exp-${feature.flagKey}" class="block cursor-pointer rounded-sm bg-gray-100 p-2 dark:bg-gray-900 has-checked:bg-gray-200 dark:has-checked:bg-gray-800">
+                <strong>${feature.name}</strong>
+                <input type="checkbox" class="checkbox float-right m-0" ${enabled ? 'checked' : ''} id="exp-${feature.flagKey}" />
+                <br>
+                ${feature.description || "No description available."}
+                <br>
+                ${feature.documentationUrl ? `<a href="${feature.documentationUrl}" class="text-blue-500 hover:underline">Info</a>` : ""}
+                <small class="text-gray-500 dark:text-gray-400">Status: ${feature.stage}</small>
+            </label>
         `;
         experimentsList.appendChild(listItem);
     });
-}, undefined, ["alpha", "beta"])
+}, true, ['alpha', 'beta', 'general-availability'])
