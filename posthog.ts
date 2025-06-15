@@ -1,5 +1,11 @@
 import posthog from "posthog-js";
-import { Dialog, once } from './utils.ts';
+import markdownit from 'markdown-it';
+const md = markdownit({
+    linkify: true,
+    breaks: true,
+});
+
+import { Dialog, once } from "./utils.ts";
 once(() => {
     posthog.init("phc_FeriuDBIyqt9KKKHXDBSebZhzan9IPZzHjuN6JwrVzZ", {
         api_host: "https://us.i.posthog.com",
@@ -13,10 +19,9 @@ once(() => {
         opt_out_persistence_by_default: true,
     });
 }, "posthog-init");
-export {
-    posthog,
-}
+export { posthog };
 export default posthog;
+
 
 export class CookieConsent extends HTMLElement {
     constructor() {
@@ -89,9 +94,7 @@ customElements.define("cookie-consent", CookieConsent);
 const experimentsDialogElem = document.getElementById(
     "experiments-dialog",
 ) as HTMLDivElement;
-const experimentsDialog = new Dialog(
-    experimentsDialogElem
-)
+const experimentsDialog = new Dialog(experimentsDialogElem);
 const experimentsList = document.getElementById(
     "experiments-list",
 ) as HTMLUListElement;
@@ -102,58 +105,80 @@ experimentsButton.addEventListener("click", () => {
     experimentsDialog.show();
 });
 
-    
-
 let experimentsModified = false;
 let changes: Record<string, boolean> = {};
 
 const cancelButton = document.getElementById(
-    "cancel-experiments",
+    "experiments-cancel",
 ) as HTMLButtonElement;
 cancelButton.addEventListener("click", () => {
-    if (experimentsModified) {
-        const confirmDiscard = confirm("You have unsaved changes. Are you sure you want to discard them?");
-        if (!confirmDiscard) return;
-    }
+    const unsavedChanges = experimentsList.querySelectorAll(
+        "label.unsaved",
+    );
+    unsavedChanges.forEach((label) => {
+        label.classList.remove("unsaved");
+        const checkbox = label.querySelector("input[type='checkbox']") as HTMLInputElement;
+        checkbox.checked = posthog.isFeatureEnabled(checkbox.id.replace("exp-", ""));
+    });
     changes = {};
     experimentsModified = false;
-    experimentsDialog.hide();
+    saveButton.disabled = true;
 });
 const saveButton = document.getElementById(
-    "save-experiments",
+    "experiments-save",
 ) as HTMLButtonElement;
 saveButton.addEventListener("click", () => {
-    if (!experimentsModified) {
-        alert("No changes to save.");
-        return;
-    }
-experimentsList.addEventListener("change", (event) => {
-    const target = event.target as HTMLInputElement;
-    if (target.tagName.toLowerCase() === "input" && target.type === "checkbox") {
-        const featureFlagKey = target.id.replace("exp-", "");
-        experimentsModified = true;
-        changes[featureFlagKey] = target.checked;
+    const unsavedChanges = experimentsList.querySelectorAll(
+        "label.unsaved",
+    );
+    unsavedChanges.forEach((label) => {
+        label.classList.remove("unsaved");
+        const checkbox = label.querySelector("input[type='checkbox']") as HTMLInputElement;
+        checkbox.checked = posthog.isFeatureEnabled(checkbox.id.replace("exp-", ""));
+    });
+    if (experimentsModified) {
+        for (const [key, value] of Object.entries(changes)) {
+            posthog.updateEarlyAccessFeatureEnrollment(key, value);
+        }
+        experimentsModified = false;
+        changes = {};
+        experimentsDialog.hide();
+        saveButton.disabled = true;
+    } else {
+        experimentsDialog.hide();
     }
 });
 
-
-posthog.getEarlyAccessFeatures((features) => {
-    console.log("Early access features:", features);
-    features.forEach((feature) => {
-        const listItem = document.createElement("li");
-        const enabled = posthog.isFeatureEnabled(feature.flagKey);
-        listItem.className = "contents";
-        listItem.innerHTML = `
-            <label for="exp-${feature.flagKey}" class="block cursor-pointer rounded-sm bg-gray-100 p-2 dark:bg-gray-900 has-checked:bg-gray-200 dark:has-checked:bg-gray-800">
-                <strong>${feature.name}</strong>
-                <input type="checkbox" class="checkbox float-right m-0" ${enabled ? 'checked' : ''} id="exp-${feature.flagKey}" />
-                <br>
-                ${feature.description || "No description available."}
-                <br>
-                ${feature.documentationUrl ? `<a href="${feature.documentationUrl}" class="text-blue-500 hover:underline">Info</a>` : ""}
-                <small class="text-gray-500 dark:text-gray-400">Status: ${feature.stage}</small>
-            </label>
-        `;
-        experimentsList.appendChild(listItem);
-    });
-}, true, ['alpha', 'beta', 'general-availability'])
+posthog.getEarlyAccessFeatures(
+    (features) => {
+        console.log("Early access features:", features);
+        features.forEach((feature) => {
+            const listItem = document.createElement("li");
+            const enabled = posthog.isFeatureEnabled(feature.flagKey);
+            listItem.className = "contents";            listItem.innerHTML = `
+                <label for="exp-${feature.flagKey}" class="block cursor-pointer rounded-sm bg-gray-100 p-2 dark:bg-gray-900">
+                    <strong>${feature.name}</strong>
+                    <input type="checkbox" class="checkbox float-right m-0" ${enabled ? "checked" : ""} id="exp-${feature.flagKey}" />
+                    <br>
+                    <div class="prose dark:prose-invert">${md.renderInline(feature.description ?? "No description available.")}</div>
+                    ${feature.documentationUrl ? `<a href="${feature.documentationUrl}" class="text-blue-500 hover:underline">Info</a>` : ""}
+                    <small class="text-gray-500 dark:text-gray-400">Status: ${feature.stage}</small>
+                </label>
+            `;
+            experimentsList.appendChild(listItem);
+            const checkbox = listItem.querySelector(
+                `#exp-${feature.flagKey}`,
+            ) as HTMLInputElement;
+            checkbox.addEventListener("change", () => {
+                const featureFlagKey = checkbox.id.replace("exp-", "");
+                experimentsModified = true;
+                saveButton.disabled = false;
+                const label = checkbox.parentElement as HTMLLabelElement;
+                label.classList.add("unsaved");
+                changes[featureFlagKey] = checkbox.checked;
+            });
+        });
+    },
+    true,
+    ["alpha", "beta", "general-availability"],
+);

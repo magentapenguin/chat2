@@ -11,15 +11,18 @@
     "@tailwindcss/vite": "^4.1.6",
     "gsap": "^3.13.0",
     "inter-ui": "^4.1.0",
+    "markdown-it": "^14.1.0",
     "nanoid": "^5.1.5",
-    "posthog-js": "^1.249.3",
-    "tailwindcss": "^4.1.6",
-    "vite": "^6.3.5"
+    "posthog-js": "^1.249.3"
   },
   "type": "module",
   "devDependencies": {
     "@hcaptcha/types": "^1.0.4",
+    "@tailwindcss/typography": "^0.5.16",
+    "@types/markdown-it": "^14.1.2",
     "prettier": "^3.5.3",
-    "prettier-plugin-tailwindcss": "^0.6.12"
+    "prettier-plugin-tailwindcss": "^0.6.12",
+    "tailwindcss": "^4.1.6",
+    "vite": "^6.3.5"
   }
 }

@@ -27,15 +27,12 @@
             <header class="mb-4 flex items-center justify-between">
                 <h1 class="text-2xl font-bold">Chat Application</h1>
                 <nav class="flex items-center gap-2">
-                    <div 
-                    data-require-auth="no-user">
+                    <div data-require-auth="no-user">
                         <button id="login-button" class="btn" type="button">
                             Login
                         </button>
                     </div>
-                    <div
-                    data-require-auth="user" 
-                    hidden>
+                    <div data-require-auth="user" hidden>
                         <button
                             id="logout-button"
                             class="btn danger"
@@ -78,10 +75,10 @@
                 </fieldset>
             </form>
             <div class="flex-1"></div>
-            <footer class="mt-2 flex items-center text-sm gap-2">
+            <footer class="mt-2 flex items-center gap-2 text-sm">
                 <a
                     href="legal"
-                    class="text-neutral-600/80 underline hover:text-neutral-600 dark:text-neutral-400/80 dark:hover:text-neutral-400 cursor-pointer"
+                    class="cursor-pointer text-neutral-600/80 underline hover:text-neutral-600 dark:text-neutral-400/80 dark:hover:text-neutral-400"
                     title="Legal Information"
                 >
                     Legal
@@ -90,17 +87,20 @@
                     id="view-experiments"
                     title="View Experiments"
                     data-require-auth="user"
-                    class="text-neutral-600/80 underline hover:text-neutral-600 dark:text-neutral-400/80 dark:hover:text-neutral-400 cursor-pointer"
+                    class="cursor-pointer text-neutral-600/80 underline hover:text-neutral-600 dark:text-neutral-400/80 dark:hover:text-neutral-400"
                 >
                     Experiments
                 </button>
                 <div class="flex-1"></div>
-                <span class="text-neutral-600/80 dark:text-neutral-400/80 text-xs" id="build-info">
+                <span
+                    class="text-xs text-neutral-600/80 dark:text-neutral-400/80"
+                    id="build-info"
+                >
                     In Development - Not for Production Use
                 </span>
             </footer>
         </main>
-        <div 
+        <div
             id="experiments-dialog"
             class="dialog mx-auto flex flex-col items-stretch p-4"
             hidden
@@ -127,11 +127,15 @@
                     <strong>Note:</strong> Enabling or disabling experiments may
                     require a page reload to take effect.
                 </div>
-                <fieldset class="flex flex-row gap-2" id="experiments-actions" disabled>
+                <fieldset
+                    class="flex flex-row gap-2"
+                    id="experiments-actions"
+                >
                     <button
                         id="experiments-save"
                         class="btn flex-auto"
                         type="button"
+                        disabled
                     >
                         Save Changes
                     </button>
@@ -140,7 +144,7 @@
                         class="btn danger"
                         type="button"
                     >
-                        Cancel
+                        Reset
                     </div>
                 </fieldset>
                 <div
@@ -254,7 +258,7 @@
                         class="checkbox"
                         required
                     />
-                    I agree to the 
+                    I agree to the
                     <a href="legal" class="text-blue-500"> Terms of Service</a>
                 </label>
                 <div class="flex justify-stretch gap-1">
