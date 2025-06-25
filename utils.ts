@@ -213,6 +213,12 @@ interface DialogOptions {
 
 export class Dialog {
     protected closeButton: HTMLButtonElement | null = null;
+    protected eventListeners: Record<string, (() => boolean | void)[]> = {
+        "show": [],
+        "hide": [],
+        "beforeShow": [], // Cancellable
+        "beforeHide": [], // Cancellable
+    };
 
     get open() {
         return !this.dialogElement.hidden;
@@ -269,14 +275,42 @@ export class Dialog {
     }
 
     show() {
+        if (!this.triggerEvent("beforeShow")) {
+            return; // Cancelled by event listener
+        }
         this.dialogElement.hidden = false;
         this.dialogElement.focus();
+        this.triggerEvent("show");
     }
 
     hide() {
+        if (!this.triggerEvent("beforeHide")) {
+            return; // Cancelled by event listener
+        }
         this.dialogElement.hidden = true;
         if (this.closeButton) {
             this.closeButton.blur(); // Remove focus from the close button
         }
+        this.triggerEvent("hide");
+    }
+
+    on(event: string, callback: () => boolean | void) {
+        if (!this.eventListeners[event]) {
+            this.eventListeners[event] = [];
+        }
+        this.eventListeners[event].push(callback);
+    }
+
+    protected triggerEvent(event: string): boolean | void {
+        if (!this.eventListeners[event]) {
+            return;
+        }
+        for (const callback of this.eventListeners[event]) {
+            const result = callback();
+            if (result === false) {
+                return false; // Cancel the event
+            }
+        }
+        return true; // Event was not cancelled
     }
 }

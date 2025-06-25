@@ -184,3 +184,89 @@ html:has(.dialog:not([hidden])) #dialog-bg {
 .unsaved {
     @apply bg-gray-200 dark:bg-gray-800;
 }
+
+/* Animations and classes the users can use */
+@layer utilities {
+    blink, .blink {
+        animation: blink 1s steps(1, end) infinite;
+    }
+    @keyframes blink {
+        0%, 100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0;
+        }
+    }
+    ins {
+        @apply no-underline bg-green-400/60 dark:bg-green-600/60 px-0.5;
+    }
+    del {
+        @apply bg-red-400/60 dark:bg-red-600/60 px-0.5;
+    }
+    .fade-in {
+        animation: fade-in 0.3s ease-in-out forwards;
+    }
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+    .slide-in {
+        animation: slide-in 0.3s ease-in-out forwards;
+    }
+    @keyframes slide-in {
+        from {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    .rainbow {
+        animation: rainbow 5s linear infinite;
+    }
+    @keyframes rainbow {
+        0% {
+            color: #ff0000;
+        }
+        14.28% {
+            color: #ff7f00;
+        }
+        28.57% {
+            color: #ffff00;
+        }
+        42.85% {
+            color: #00ff00;
+        }
+        57.14% {
+            color: #0000ff;
+        }
+        71.42% {
+            color: #4b0082;
+        }
+        85.71% {
+            color: #9400d3;
+        }
+        100% {
+            color: #ff0000;
+        }
+    }
+    .pulse {
+        animation: scale-pulse 1s infinite;
+        transform-origin: center;
+    }
+    @keyframes scale-pulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+    }
+}

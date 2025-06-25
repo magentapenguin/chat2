@@ -45,7 +45,7 @@
             </header>
             <div
                 id="chat"
-                class="flex flex-col gap-2 overflow-y-scroll rounded-lg bg-gray-500/10 p-2 not-lg:flex-auto lg:h-96"
+                class="flex flex-col gap-2 overflow-y-scroll rounded-lg bg-gray-500/10 p-2 flex-auto"
             >
                 <!-- Chat messages will be appended here -->
             </div>
@@ -63,6 +63,7 @@
                         required
                         autocomplete="off"
                         name="message"
+                        aria-autocomplete="none"
                     />
                     <button class="btn group-disabled:hidden" type="submit">
                         Send
@@ -87,6 +88,7 @@
                     id="view-experiments"
                     title="View Experiments"
                     data-require-auth="user"
+                    type="button"
                     class="cursor-pointer text-neutral-600/80 underline hover:text-neutral-600 dark:text-neutral-400/80 dark:hover:text-neutral-400"
                 >
                     Experiments

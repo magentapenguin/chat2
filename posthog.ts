@@ -1,5 +1,5 @@
 import posthog from "posthog-js";
-import markdownit from 'markdown-it';
+import markdownit from "markdown-it";
 const md = markdownit({
     linkify: true,
     breaks: true,
@@ -21,7 +21,6 @@ once(() => {
 }, "posthog-init");
 export { posthog };
 export default posthog;
-
 
 export class CookieConsent extends HTMLElement {
     constructor() {
@@ -111,30 +110,37 @@ let changes: Record<string, boolean> = {};
 const cancelButton = document.getElementById(
     "experiments-cancel",
 ) as HTMLButtonElement;
-cancelButton.addEventListener("click", () => {
-    const unsavedChanges = experimentsList.querySelectorAll(
-        "label.unsaved",
-    );
+const resetExperimentChanges = () => {
+    const unsavedChanges = experimentsList.querySelectorAll("label.unsaved");
     unsavedChanges.forEach((label) => {
         label.classList.remove("unsaved");
-        const checkbox = label.querySelector("input[type='checkbox']") as HTMLInputElement;
-        checkbox.checked = posthog.isFeatureEnabled(checkbox.id.replace("exp-", ""));
+        const checkbox = label.querySelector(
+            "input[type='checkbox']",
+        ) as HTMLInputElement;
+        checkbox.checked = posthog.isFeatureEnabled(
+            checkbox.id.replace("exp-", ""),
+        );
     });
     changes = {};
     experimentsModified = false;
     saveButton.disabled = true;
-});
+};
+
+experimentsDialog.on("hide", resetExperimentChanges);
+cancelButton.addEventListener("click", resetExperimentChanges);
 const saveButton = document.getElementById(
     "experiments-save",
 ) as HTMLButtonElement;
 saveButton.addEventListener("click", () => {
-    const unsavedChanges = experimentsList.querySelectorAll(
-        "label.unsaved",
-    );
+    const unsavedChanges = experimentsList.querySelectorAll("label.unsaved");
     unsavedChanges.forEach((label) => {
         label.classList.remove("unsaved");
-        const checkbox = label.querySelector("input[type='checkbox']") as HTMLInputElement;
-        checkbox.checked = posthog.isFeatureEnabled(checkbox.id.replace("exp-", ""));
+        const checkbox = label.querySelector(
+            "input[type='checkbox']",
+        ) as HTMLInputElement;
+        checkbox.checked = posthog.isFeatureEnabled(
+            checkbox.id.replace("exp-", ""),
+        );
     });
     if (experimentsModified) {
         for (const [key, value] of Object.entries(changes)) {
@@ -155,7 +161,8 @@ posthog.getEarlyAccessFeatures(
         features.forEach((feature) => {
             const listItem = document.createElement("li");
             const enabled = posthog.isFeatureEnabled(feature.flagKey);
-            listItem.className = "contents";            listItem.innerHTML = `
+            listItem.className = "contents";
+            listItem.innerHTML = `
                 <label for="exp-${feature.flagKey}" class="block cursor-pointer rounded-sm bg-gray-100 p-2 dark:bg-gray-900">
                     <strong>${feature.name}</strong>
                     <input type="checkbox" class="checkbox float-right m-0" ${enabled ? "checked" : ""} id="exp-${feature.flagKey}" />

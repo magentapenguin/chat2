@@ -11,6 +11,7 @@ import {
     showToast,
     shuffle,
 } from "./utils";
+import DOMPurify from 'dompurify';
 import { supabase, Types as dbTypes } from "./supabase-client.ts";
 import { getUsername } from "./usernames.ts";
 import { posthog } from "./posthog.ts";
@@ -62,13 +63,20 @@ once(() => {
             theme: isDarkMode() ? "dark" : "light",
             callback: () => {
                 console.log("Captcha solved");
-                posthog.capture("captcha_solve", null, {send_instantly: true, transport: "sendBeacon"});
+                posthog.capture("captcha_solve", null, {
+                    send_instantly: true,
+                    transport: "sendBeacon",
+                });
             },
             "error-callback": (error) => {
                 console.error("Captcha error:", error);
-                posthog.capture("captcha_error", {
-                    error,
-                }, {send_instantly: true, transport: "sendBeacon"});
+                posthog.capture(
+                    "captcha_error",
+                    {
+                        error,
+                    },
+                    { send_instantly: true, transport: "sendBeacon" },
+                );
             },
         });
     }, "Load hCaptcha");
@@ -228,9 +236,9 @@ once(async () => {
                                     "datetime",
                                     updatedMessage.timestamp,
                                 );
-                                timestampElement.innerHTML = humanize(
+                                timestampElement.innerHTML = DOMPurify.sanitize(humanize(
                                     updatedMessage.timestamp,
-                                );
+                                ));
                             }
                         } else {
                             console.warn(
@@ -319,7 +327,7 @@ async function addMessage(message) {
     messageElement.appendChild(userElement);
     const timestampElement = document.createElement("time");
     timestampElement.setAttribute("datetime", message.timestamp);
-    timestampElement.innerHTML = humanize(message.timestamp);
+    timestampElement.innerHTML = DOMPurify.sanitize(humanize(message.timestamp));
     messageElement.appendChild(timestampElement);
 
     const user = await checkLoginUser(true);
@@ -405,11 +413,11 @@ async function addMessage(message) {
             return;
         }
         message.content = newContent;
-        contentElement.textContent = newContent;
+        contentElement.innerHTML = DOMPurify.sanitize(newContent);
     });
     actions.appendChild(editButton);
     const contentElement = document.createElement("span");
-    contentElement.textContent = message.content;
+    contentElement.innerHTML = DOMPurify.sanitize(message.content);
     if ((await checkLogin()) && message.user_id === user?.id) {
         messageElement.appendChild(actions);
     }
@@ -431,6 +439,6 @@ requireFinished(async () => {
 // Build Info
 const buildInfo = document.getElementById("build-info") as HTMLDivElement;
 if (import.meta.env.PROD) {
-    buildInfo.innerHTML = `${import.meta.env.VITE_BUILD_SHA.slice(0, 7)}
-    (<time datetime="${new Date(import.meta.env.VITE_BUILD_DATE).toISOString()}">${new Date(import.meta.env.VITE_BUILD_DATE).toLocaleDateString()}</time>)`;
+    buildInfo.innerHTML = DOMPurify.sanitize(`${import.meta.env.VITE_BUILD_SHA.slice(0, 7)}
+    (<time datetime="${new Date(import.meta.env.VITE_BUILD_DATE).toISOString()}">${new Date(import.meta.env.VITE_BUILD_DATE).toLocaleDateString()}</time>)`);
 }
