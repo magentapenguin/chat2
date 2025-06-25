@@ -215,8 +215,9 @@ once(async () => {
                             const contentElement =
                                 messageElement.querySelector("span");
                             if (contentElement) {
-                                contentElement.textContent =
-                                    updatedMessage.content;
+                                contentElement.innerHTML = DOMPurify.sanitize(
+                                    updatedMessage.content,
+                                );
                             }
                             const userElement = messageElement.querySelector(
                                 ".user",
