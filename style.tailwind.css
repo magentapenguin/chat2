@@ -259,7 +259,7 @@ html:has(.dialog:not([hidden])) #dialog-bg {
     }
     .pulse {
         animation: scale-pulse 1s infinite;
-        transform-origin: center;
+        display: inline-block;
     }
     @keyframes scale-pulse {
         0%, 100% {

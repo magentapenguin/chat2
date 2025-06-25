@@ -440,6 +440,13 @@ requireFinished(async () => {
 // Build Info
 const buildInfo = document.getElementById("build-info") as HTMLDivElement;
 if (import.meta.env.PROD) {
+    if (!import.meta.env.VITE_BUILD_SHA || !import.meta.env.VITE_BUILD_DATE) {
+        console.warn("Build information is not available.");
+        buildInfo.innerText = "Build information not available.";
+    } else {
     buildInfo.innerHTML = DOMPurify.sanitize(`${import.meta.env.VITE_BUILD_SHA.slice(0, 7)}
     (<time datetime="${new Date(import.meta.env.VITE_BUILD_DATE).toISOString()}">${new Date(import.meta.env.VITE_BUILD_DATE).toLocaleDateString()}</time>)`);
+    }
+} else {
+    buildInfo.innerText = "In Development - Not for Production Use";
 }
