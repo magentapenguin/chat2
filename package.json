@@ -9,7 +9,7 @@
     "@hcaptcha/loader": "^2.0.0",
     "@supabase/supabase-js": "^2.49.4",
     "@tailwindcss/vite": "^4.1.6",
-    "dompurify": "^3.2.6",
+    "dompurify": "^3.3.2",
     "gsap": "^3.13.0",
     "inter-ui": "^4.1.0",
     "markdown-it": "^14.1.0",
